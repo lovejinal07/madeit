@@ -1,0 +1,3205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffb84d">
+<meta name="description" content="7~8세부터 초등학생이 사자성어·속담·관용구를 카드로 배우고, 퀴즈와 5가지 미니게임(짝꿍 카드·빈칸 채우기·순서 기차·OX 퀴즈·선 잇기)으로 익히는 놀이터">
+<title>말랑말랑 말놀이터 · 사자성어·속담·관용구</title>
+<style>
+  :root{
+    --ink:#3b2f28;
+    --ink-soft:#7d6b5f;
+    --line:#f1e4d5;
+    --card:#ffffff;
+    --coral:#ff7a59;
+    --coral-deep:#e0552f;
+    --sun:#ffc93c;
+    --mint:#25c2a0;
+    --mint-deep:#12876f;
+    --sky:#4aa8f0;
+    --grape:#8a6cf0;
+    --shadow:0 10px 24px rgba(140,105,70,.10);
+    --radius:22px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 520px at 10% -10%, #ffe9c2 0%, rgba(255,233,194,0) 62%),
+      radial-gradient(900px 480px at 100% 0%, #d9ecff 0%, rgba(217,236,255,0) 60%),
+      radial-gradient(900px 500px at 50% 110%, #efe4ff 0%, rgba(239,228,255,0) 62%),
+      #fffaf2;
+    background-attachment:fixed;
+    min-height:100vh;
+    word-break:keep-all;
+    line-height:1.5;
+  }
+  button{font-family:inherit;cursor:pointer;touch-action:manipulation}
+  .app{
+    max-width:460px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+
+  /* ── 상단 바 ── */
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:30;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 16px 10px;
+    background:#fffaf2;
+    box-shadow:0 8px 14px -10px rgba(140,105,70,.28);
+  }
+  .brand-mark,
+  .stat .ico,
+  .big-emoji,
+  .tab .tab-ico,
+  .mem-back,
+  .done-stars,
+  .spark,
+  .confetti{
+    font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","EmojiOne Color",sans-serif;
+  }
+  .brand{display:flex;align-items:center;gap:9px;min-width:0}
+  .brand-mark{
+    width:38px;height:38px;flex:0 0 38px;
+    display:grid;place-items:center;
+    font-size:20px;
+    border-radius:13px;
+    background:linear-gradient(150deg,#ffe07a,#ffb04d);
+    box-shadow:0 4px 0 #e9a233, 0 8px 14px rgba(233,162,51,.25);
+  }
+  .brand-text{min-width:0}
+  .brand-text h1{
+    margin:0;
+    font-size:16.5px;
+    font-weight:900;
+    letter-spacing:-.03em;
+    white-space:nowrap
+  }
+  .brand-text p{
+    margin:1px 0 0;
+    font-size:11px;
+    font-weight:700;
+    color:#a48f80;
+    letter-spacing:-.01em;
+    white-space:nowrap
+  }
+  .stats{display:flex;gap:6px;flex:0 0 auto}
+  .stat{
+    display:flex;align-items:center;gap:4px;
+    padding:7px 10px 7px 8px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:900;
+    background:#fff;
+    border:2px solid #ffe3ab;
+    box-shadow:0 3px 0 rgba(240,200,120,.35);
+    transform-origin:center;
+  }
+  .stat .ico{font-size:15px;line-height:1}
+  .stat .num{min-width:14px;text-align:center;letter-spacing:-.02em}
+  .stat.streak{border-color:#ffd3c6;box-shadow:0 3px 0 rgba(240,160,140,.3)}
+  .stat.bump{animation:bump .5s ease}
+  @keyframes bump{
+    0%{transform:scale(1)}
+    35%{transform:scale(1.22) rotate(-4deg)}
+    70%{transform:scale(.96)}
+    100%{transform:scale(1)}
+  }
+
+  /* ── 화면 ── */
+  .main{flex:1;padding:6px 14px 104px}
+  .screen{display:none}
+  .screen.active{display:block;animation:fadeUp .28s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .intro{padding:2px 2px 10px}
+  .intro h2{
+    margin:0 0 4px;
+    font-size:21px;
+    font-weight:900;
+    letter-spacing:-.04em;
+  }
+  .intro p{margin:0;font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.5}
+
+  /* ── 칩(필터) ── */
+  .chips{
+    display:flex;
+    gap:7px;
+    overflow-x:auto;
+    padding:2px 2px 10px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    flex:0 0 auto;
+    padding:9px 15px;
+    border-radius:999px;
+    border:2px solid #f0e2d2;
+    background:#fff;
+    color:#8a7565;
+    font-size:13.5px;
+    font-weight:800;
+    letter-spacing:-.02em;
+    transition:transform .12s ease, background .18s ease, color .18s ease;
+    box-shadow:0 3px 0 rgba(240,226,210,.7);
+  }
+  .chip:active{transform:translateY(2px)}
+  .chip[aria-pressed="true"],
+  .chip.active{
+    background:linear-gradient(140deg,#ff9a63,#ff7a59);
+    color:#fff;
+    border-color:#ff8a63;
+    box-shadow:0 4px 0 #d95a35, 0 8px 16px rgba(255,122,89,.28);
+  }
+  .list-count{
+    margin:0 2px 10px;
+    font-size:12.5px;
+    font-weight:800;
+    color:#b19c8a;
+  }
+  .list-count b{color:var(--coral-deep)}
+
+  /* ── 배움 카드 ── */
+  .learn-list{display:flex;flex-direction:column;gap:12px}
+  .learn-card{
+    position:relative;
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:14px 15px 15px;
+    border:2px solid #ffffff;
+    box-shadow:var(--shadow);
+    animation:fadeUp .3s ease both;
+    overflow:hidden;
+  }
+  .learn-card::before{
+    content:"";
+    position:absolute;
+    left:0;top:0;bottom:0;
+    width:6px;
+    background:var(--accent,#ffb04d);
+  }
+  .learn-card[data-type="사자성어"]{--accent:#ff9a63}
+  .learn-card[data-type="속담"]{--accent:#37c9b0}
+  .learn-card[data-type="관용구"]{--accent:#9a80f5}
+  .lc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:4px}
+  .lc-title{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:7px 4px 0}
+  .badge{
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:-.01em;
+    padding:4px 9px;
+    border-radius:999px;
+    color:#fff;
+    background:var(--accent,#ffb04d);
+    box-shadow:0 2px 0 rgba(0,0,0,.06);
+  }
+  .word{
+    margin:0;
+    font-size:19px;
+    font-weight:900;
+    letter-spacing:-.04em;
+    line-height:1.3;
+  }
+  .hanja{
+    font-size:12.5px;
+    font-weight:800;
+    color:#b7a493;
+    letter-spacing:.02em;
+  }
+  .speak-btn{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:8px 11px;
+    border-radius:999px;
+    border:2px solid #bff0e4;
+    background:#eafbf5;
+    color:var(--mint-deep);
+    font-size:12.5px;
+    font-weight:900;
+    box-shadow:0 3px 0 #b9e9dc;
+    transition:transform .12s ease,background .18s ease;
+  }
+  .speak-btn:active{transform:translateY(2px)}
+  .speak-btn.speaking{
+    background:linear-gradient(140deg,#39d7b5,#25c2a0);
+    color:#fff;
+    border-color:#25c2a0;
+    box-shadow:0 3px 0 #148d74;
+    animation:pulse 1s ease infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.72}}
+  .lc-row{
+    margin:10px 0 0;
+    padding-left:4px;
+    font-size:14px;
+    line-height:1.6;
+    color:#4c3d34;
+    font-weight:600;
+    display:flex;
+    gap:7px;
+    align-items:flex-start;
+  }
+  .lc-row .tag{
+    flex:0 0 auto;
+    margin-top:2px;
+    font-size:11px;
+    font-weight:900;
+    padding:1px 6px;
+    border-radius:6px;
+    background:#fff0e6;
+    color:#dd5b31;
+  }
+  .lc-row.example .tag{background:#e9fbf5;color:#12876f}
+  .lc-row.example{color:#5b6b64;font-size:13.5px}
+
+  /* ── 퀴즈 ── */
+  .panel{
+    background:#fff;
+    border-radius:24px;
+    padding:16px 15px 18px;
+    box-shadow:var(--shadow);
+    border:2px solid #fff;
+  }
+  .hidden{display:none !important}
+  #nextWrap{scroll-margin-bottom:120px}
+  #feedback{scroll-margin-bottom:120px}
+
+  .quiz-intro{text-align:center;padding:8px 4px 4px}
+  .big-emoji{font-size:44px;line-height:1;margin-bottom:6px}
+  .quiz-intro h2{margin:0 0 6px;font-size:21px;font-weight:900;letter-spacing:-.04em}
+  .quiz-intro p{margin:0 auto 14px;max-width:300px;font-size:13.5px;color:var(--ink-soft);font-weight:600}
+  .cat-label{
+    display:block;
+    text-align:left;
+    font-size:12px;
+    font-weight:900;
+    color:#b19c8a;
+    margin:0 2px 7px;
+  }
+  .cat-row{display:flex;gap:7px;margin-bottom:16px}
+  .cat-row .chip{flex:1 1 0;text-align:center;padding:10px 4px;font-size:12.5px}
+
+  .big-btn{
+    width:100%;
+    padding:16px 18px;
+    border:none;
+    border-radius:18px;
+    background:linear-gradient(140deg,#ff9a63,#ff6f4d);
+    color:#fff;
+    font-size:17.5px;
+    font-weight:900;
+    letter-spacing:-.02em;
+    box-shadow:0 6px 0 #d9542f, 0 12px 22px rgba(255,111,77,.28);
+    transition:transform .1s ease,box-shadow .1s ease;
+  }
+  .big-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #d9542f,0 6px 12px rgba(255,111,77,.24)}
+  .big-btn.mint{
+    background:linear-gradient(140deg,#3fd9b8,#21bf9d);
+    box-shadow:0 6px 0 #149a7e, 0 12px 22px rgba(33,191,157,.25);
+  }
+  .big-btn.mint:active{box-shadow:0 2px 0 #149a7e,0 6px 12px rgba(33,191,157,.2)}
+  .big-btn.ghost{
+    background:#fff;
+    color:#8a7565;
+    border:2px solid #f0e2d2;
+    box-shadow:0 4px 0 #f0e2d2;
+    font-size:15px;
+  }
+  .big-btn.ghost:active{box-shadow:0 1px 0 #f0e2d2;transform:translateY(3px)}
+  .best-line{margin:12px 0 0;font-size:12.5px;color:#a2907f;font-weight:700}
+  .best-line b{color:var(--coral-deep)}
+
+  .quiz-top{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+  .bar{
+    flex:1;
+    height:11px;
+    border-radius:99px;
+    background:#f4ead9;
+    overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.06);
+  }
+  .bar-fill{
+    height:100%;
+    width:0%;
+    border-radius:99px;
+    background:linear-gradient(90deg,#ffd25c,#ff9a52);
+    transition:width .35s ease;
+  }
+  .counter{flex:0 0 auto;font-size:12.5px;font-weight:900;color:#b19c8a;letter-spacing:-.01em}
+
+  .qcard{
+    background:linear-gradient(160deg,#fffdf6,#fff4e2);
+    border:2px solid #ffe9c4;
+    border-radius:20px;
+    padding:16px 14px;
+    text-align:center;
+    margin-bottom:12px;
+  }
+  .q-kind{
+    display:inline-block;
+    font-size:11px;
+    font-weight:900;
+    padding:4px 10px;
+    border-radius:999px;
+    margin-bottom:9px;
+    letter-spacing:-.01em;
+  }
+  .q-kind.kind-meaning{background:#ffeccc;color:#c98500}
+  .q-kind.kind-word{background:#e6f0ff;color:#2d72c4}
+  .q-label{margin:0 0 8px;font-size:12.5px;font-weight:800;color:#a2907f}
+  .q-text{
+    margin:0;
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:-.05em;
+    line-height:1.3;
+    color:#33261f;
+  }
+  .q-text.situation{
+    font-size:16.5px;
+    font-weight:700;
+    letter-spacing:-.03em;
+    line-height:1.65;
+    text-align:left;
+    color:#4c3d34;
+  }
+  .q-sub{
+    margin:7px 0 0;
+    font-size:13px;
+    font-weight:800;
+    color:#b7a493;
+    letter-spacing:.02em;
+  }
+  .hint-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:9px 13px;
+    border-radius:999px;
+    border:2px solid #ffe0a3;
+    background:#fffaf0;
+    color:#c08a12;
+    font-size:13px;
+    font-weight:900;
+    box-shadow:0 3px 0 #ffe6b8;
+    margin-bottom:11px;
+  }
+  .hint-btn:active{transform:translateY(2px)}
+  .hint-box{
+    margin:0 0 12px;
+    padding:11px 13px;
+    border-radius:14px;
+    background:#fffaec;
+    border:2px dashed #ffdf9e;
+    font-size:13.5px;
+    font-weight:700;
+    color:#9a6f16;
+    animation:fadeUp .2s ease both;
+  }
+
+  .choices{display:flex;flex-direction:column;gap:9px}
+  .choice{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    text-align:left;
+    padding:12px 13px;
+    min-height:56px;
+    border-radius:16px;
+    border:2px solid #efe6da;
+    background:#fff;
+    color:var(--ink);
+    font-size:14.5px;
+    font-weight:700;
+    letter-spacing:-.02em;
+    line-height:1.45;
+    box-shadow:0 3px 0 #f2e8db;
+    transition:transform .1s ease,background .15s ease,border-color .15s ease;
+  }
+  .choice:disabled{cursor:default}
+  .choice:not(:disabled):active{transform:translateY(3px);box-shadow:0 1px 0 #f2e8db}
+  .choice .num{
+    flex:0 0 26px;
+    width:26px;height:26px;
+    display:grid;place-items:center;
+    border-radius:50%;
+    background:#f1eaff;
+    color:#7454d8;
+    font-size:12.5px;
+    font-weight:900;
+  }
+  .choice .txt{flex:1;min-width:0}
+  .choice.correct{
+    border-color:#31c9a8;
+    background:#e9fbf5;
+    box-shadow:0 3px 0 #a7e8d8;
+  }
+  .choice.correct .num{background:#31c9a8;color:#fff}
+  .choice.wrong{
+    border-color:#ff9a86;
+    background:#fff1ec;
+    box-shadow:0 3px 0 #ffd3c8;
+  }
+  .choice.wrong .num{background:#ff9a86;color:#fff}
+  .choice.dim{opacity:.55}
+
+  .feedback{
+    margin-top:12px;
+    padding:13px 14px;
+    border-radius:16px;
+    font-size:13.5px;
+    line-height:1.55;
+    font-weight:700;
+    animation:fadeUp .22s ease both;
+  }
+  .feedback.good{background:#e9fbf5;border:2px solid #a7e8d8;color:#0f7b64}
+  .feedback.bad{background:#fff5ec;border:2px solid #ffd7b8;color:#a3562a}
+  .feedback b{display:block;font-size:14.5px;margin-bottom:3px;font-weight:900}
+  .feedback p{margin:0;font-weight:600;color:#6b5a4f}
+  .feedback .got{color:#d9542f;font-weight:900}
+
+  .quiz-result{text-align:center;padding:6px 2px 2px}
+  .score-ring{
+    width:132px;height:132px;
+    margin:4px auto 12px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:conic-gradient(#ffc93c var(--p,70%), #f5ebdc 0);
+    position:relative;
+  }
+  .score-ring::after{
+    content:"";
+    position:absolute;inset:11px;
+    border-radius:50%;
+    background:#fff;
+  }
+  .score-in{position:relative;z-index:1}
+  .score-in .big{display:block;font-size:34px;font-weight:900;letter-spacing:-.05em;line-height:1.1}
+  .score-in .small{display:block;font-size:11.5px;font-weight:800;color:#b19c8a}
+  .quiz-result h2{margin:0 0 6px;font-size:20px;font-weight:900;letter-spacing:-.04em}
+  .quiz-result p{margin:0 0 16px;font-size:13.5px;color:var(--ink-soft);font-weight:600}
+  .result-chips{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+  .pill{
+    padding:8px 12px;
+    border-radius:999px;
+    background:#fff8e8;
+    border:2px solid #ffe6b8;
+    font-size:12.5px;
+    font-weight:900;
+    color:#a87a1a;
+  }
+  .pill.blue{background:#eef5ff;border-color:#cfe4ff;color:#2b6cb0}
+  .btn-row{display:flex;flex-direction:column;gap:9px}
+
+  /* ── 짝꿍 카드 ── */
+  .level-row{display:flex;gap:8px;margin-bottom:14px}
+  .level-btn{
+    flex:1;
+    padding:14px 6px 12px;
+    border-radius:18px;
+    border:2px solid #efe6da;
+    background:#fff;
+    box-shadow:0 4px 0 #f2e8db;
+    color:#6b5a4f;
+    font-weight:900;
+    font-size:13.5px;
+    letter-spacing:-.02em;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    transition:transform .1s ease;
+  }
+  .level-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #f2e8db}
+  .level-btn .lv-emoji{font-size:20px}
+  .level-btn .lv-sub{font-size:11px;font-weight:800;color:#b19c8a}
+  .level-btn.on{
+    background:linear-gradient(150deg,#f0e9ff,#e6dcff);
+    border-color:#c9b6ff;
+    box-shadow:0 4px 0 #c9b6ff;
+    color:#5b3fc9;
+  }
+  .level-btn.on .lv-sub{color:#7b5fe0}
+
+  .mem-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+  .mem-info{font-size:12.5px;font-weight:900;color:#b19c8a}
+  .mem-info b{color:var(--grape)}
+  .mini-btn{
+    padding:8px 12px;
+    border-radius:999px;
+    border:2px solid #e8dcff;
+    background:#f6f1ff;
+    color:#6f4fe0;
+    font-size:12px;
+    font-weight:900;
+    box-shadow:0 3px 0 #e2d6ff;
+  }
+  .mini-btn:active{transform:translateY(2px)}
+
+  .mem-help{
+    margin:0 0 10px;
+    font-size:12px;
+    font-weight:700;
+    color:#a2907f;
+    line-height:1.45;
+  }
+  .mem-board{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:9px;
+  }
+  .mem-board.cols-3{grid-template-columns:repeat(3,1fr);gap:7px}
+  .mem-card{
+    position:relative;
+    height:110px;
+    padding:0;
+    border:none;
+    background:transparent;
+    perspective:700px;
+  }
+  .mem-board.cols-3 .mem-card{height:102px}
+  .mem-inner{
+    position:relative;
+    display:block;
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+    transition:transform .38s cubic-bezier(.4,1.4,.6,1);
+  }
+  .mem-card.flipped .mem-inner,
+  .mem-card.matched .mem-inner{transform:rotateY(180deg)}
+  .mem-face{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    padding:6px;
+    border-radius:16px;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    text-align:center;
+    overflow:hidden;
+  }
+  .mem-back{
+    background:linear-gradient(150deg,#ffd964,#ff9c62);
+    color:#fff;
+    font-size:21px;
+    font-weight:900;
+    box-shadow:inset 0 -5px 0 rgba(202,120,30,.22), 0 4px 10px rgba(210,150,70,.22);
+  }
+  .mem-back span{font-size:9.5px;letter-spacing:.06em;opacity:.92}
+  .mem-front{
+    transform:rotateY(180deg);
+    background:#fff;
+    border:2px solid #efe6da;
+    color:#3b2f28;
+    font-size:12.5px;
+    font-weight:800;
+    line-height:1.35;
+    letter-spacing:-.03em;
+    box-shadow:0 4px 0 #f2e8db;
+  }
+  .mem-board.cols-3 .mem-front{font-size:11.5px}
+  .mem-front .mem-tag{
+    font-size:9px;
+    font-weight:900;
+    padding:1px 6px;
+    border-radius:999px;
+    background:#f1eaff;
+    color:#7454d8;
+    letter-spacing:0;
+  }
+  .mem-card[data-side="short"] .mem-front .mem-tag{background:#e9fbf5;color:#12876f}
+  .mem-card.matched .mem-front{background:#e9fbf5;border-color:#8fe0cd;box-shadow:0 4px 0 #b7eadd}
+  .mem-card.matched{animation:matchPop .45s ease}
+  @keyframes matchPop{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+  .mem-card.wrongShake .mem-inner{animation:shake .4s ease}
+  @keyframes shake{0%,100%{transform:rotateY(180deg) translateX(0)}25%{transform:rotateY(180deg) translateX(-5px)}75%{transform:rotateY(180deg) translateX(5px)}}
+  .mem-card.matched .mem-inner{box-shadow:0 0 0 3px rgba(37,194,160,.45) inset;border-radius:16px}
+
+  .done-card{
+    text-align:center;
+    padding:22px 16px 18px;
+    border-radius:22px;
+    background:linear-gradient(160deg,#fffdf3,#fff2d8);
+    border:2px solid #ffe3a6;
+    animation:fadeUp .3s ease both;
+  }
+  .done-card .big-emoji{font-size:52px}
+  .done-card h2{margin:2px 0 6px;font-size:21px;font-weight:900;letter-spacing:-.04em}
+  .done-card p{margin:0 0 14px;font-size:13.5px;color:#8a7565;font-weight:700}
+  .done-stars{font-size:24px;letter-spacing:4px;margin-bottom:14px}
+
+  /* ── 하단 탭 ── */
+  .tabbar{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    z-index:40;
+    max-width:460px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:4px;
+    padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+    background:rgba(255,253,248,.96);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-top:1px solid #f4e9db;
+    box-shadow:0 -6px 20px rgba(140,105,70,.07);
+  }
+  .tab{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    padding:8px 2px 7px;
+    border:none;
+    border-radius:15px;
+    background:transparent;
+    color:#a8998a;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:-.03em;
+    transition:background .18s ease,color .18s ease,transform .1s ease;
+  }
+  .tab .tab-ico{font-size:20px;line-height:1;filter:grayscale(.5);transition:filter .18s ease}
+  .tab:active{transform:scale(.96)}
+  .tab.active{color:#e0552f;background:#fff1e8}
+  .tab.active .tab-ico{filter:none}
+
+  /* ── 게임 놀이터 (허브) ── */
+  .hub-list{display:flex;flex-direction:column;gap:10px}
+  .hub-card{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+    padding:11px 12px;border-radius:18px;border:2px solid #efe6da;background:#fff;
+    box-shadow:0 4px 0 #f2e8db;
+    transition:transform .1s ease,box-shadow .1s ease;
+  }
+  .hub-card:active{transform:translateY(3px);box-shadow:0 1px 0 #f2e8db}
+  .hub-ico{
+    flex:0 0 46px;width:46px;height:46px;display:grid;place-items:center;
+    border-radius:15px;font-size:23px;line-height:1;background:#fff4e2;
+    font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  }
+  .hub-card[data-game="match"] .hub-ico{background:#f1eaff}
+  .hub-card[data-game="blank"] .hub-ico{background:#fff0e0}
+  .hub-card[data-game="train"] .hub-ico{background:#e8f3ff}
+  .hub-card[data-game="ox"] .hub-ico{background:#ffeaf0}
+  .hub-card[data-game="line"] .hub-ico{background:#e9fbf5}
+  .hub-body{flex:1;min-width:0}
+  .hub-body h3{margin:0;font-size:14.5px;font-weight:900;letter-spacing:-.03em}
+  .hub-body p{margin:2px 0 0;font-size:11.5px;font-weight:700;color:#a2907f;line-height:1.4}
+  .hub-go{flex:0 0 auto;font-size:19px;font-weight:900;color:#d9c6b2}
+  .hub-line{margin:14px 2px 0;text-align:center;font-size:12.5px;font-weight:800;color:#b19c8a;line-height:1.6}
+  .hub-line b{color:var(--coral-deep)}
+
+  /* ── 새 미니게임 공통 ── */
+  .game-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .back-btn{
+    flex:0 0 auto;padding:7px 11px;border-radius:999px;border:2px solid #efe6da;background:#fff;
+    color:#8a7565;font-size:12px;font-weight:900;box-shadow:0 3px 0 #f2e8db;
+    transition:transform .1s ease;
+  }
+  .back-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #f2e8db}
+  .game-name{margin:0;font-size:15px;font-weight:900;letter-spacing:-.03em;white-space:nowrap}
+  .game-step{margin-left:auto;font-size:12px;font-weight:900;color:#b19c8a;white-space:nowrap}
+  .game-note{margin:0 0 12px;font-size:12.5px;font-weight:700;color:#a2907f;line-height:1.5}
+  .game-hint{
+    margin:0 0 12px;padding:10px 12px;border-radius:14px;background:#fffaec;
+    border:2px dashed #ffdf9e;font-size:13px;font-weight:800;color:#9a6f16;line-height:1.5;
+  }
+  .game-hint b{color:#c08a12}
+  .small-bar{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+  .small-bar .bar{height:9px}
+
+  /* ── 빈칸 톡톡 채우기 ── */
+  .blank-line{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 5px;
+    margin:0 0 13px;padding:16px 10px;border-radius:18px;
+    background:linear-gradient(160deg,#fffdf6,#fff4e2);border:2px solid #ffe9c4;
+  }
+  .blank-token{font-size:21px;font-weight:900;letter-spacing:-.04em;color:#33261f;line-height:1.3}
+  .blank-slot{
+    display:inline-grid;place-items:center;min-width:56px;height:44px;padding:0 10px;margin:0 3px;
+    border:2px dashed #ffb04d;border-radius:12px;background:#fffdf6;
+    font-size:19px;font-weight:900;color:#e0a24a;line-height:1.1;
+  }
+  .blank-slot.filled{border:2px solid #25c2a0;background:#eefbf7;color:#12876f}
+  .blank-slot.bad{border-color:#ff7a59;color:#e0552f;background:#fff1ec;animation:shakeX .35s ease}
+  @keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .tile{
+    padding:15px 8px;border-radius:16px;border:2px solid #efe6da;background:#fff;
+    font-size:17px;font-weight:900;letter-spacing:-.03em;color:#4c3d34;line-height:1.3;
+    box-shadow:0 4px 0 #f2e8db;
+    transition:transform .1s ease,box-shadow .1s ease;
+  }
+  .tile:active{transform:translateY(3px);box-shadow:0 1px 0 #f2e8db}
+  .tile:disabled{cursor:default}
+  .tile.good{background:#e9fbf5;border-color:#8fe0cd;box-shadow:0 4px 0 #b7eadd;color:#0f7b64}
+  .tile.bad{background:#fff1ec;border-color:#ff9a86;box-shadow:0 4px 0 #ffd3c8;color:#c2411f;opacity:.7}
+  .tile.dim{opacity:.45}
+
+  /* ── 말 순서 기차 ── */
+  .train-track{
+    display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:66px;
+    padding:10px;border-radius:18px;margin-bottom:6px;
+    background:linear-gradient(160deg,#f2f9ff,#e6f3ff);border:2px dashed #b9dcff;
+    transition:background .2s ease,border-color .2s ease;
+  }
+  .train-track.win{border-color:#8fe0cd;background:linear-gradient(160deg,#eefbf7,#dcf7ef)}
+  .train-track.shake{animation:shakeX .35s ease}
+  .train-engine{font-size:19px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+  .train-chip{
+    padding:9px 12px;border-radius:12px;border:2px solid #cfe4ff;background:#fff;
+    font-size:15px;font-weight:900;letter-spacing:-.03em;color:#2d5f96;box-shadow:0 3px 0 #dbe8ff;
+  }
+  .train-chip:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe8ff}
+  .train-chip.empty{
+    min-width:34px;padding:9px 8px;border-style:dashed;border-color:#cfe4ff;
+    background:transparent;color:#b9d4f2;box-shadow:none;cursor:default;
+  }
+  .train-pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .train-card{
+    padding:13px 15px;border-radius:14px;border:2px solid #dbe8ff;background:#fff;
+    font-size:16.5px;font-weight:900;letter-spacing:-.04em;color:#2d5f96;
+    box-shadow:0 4px 0 #dbe8ff;transition:transform .1s ease,opacity .15s ease;
+  }
+  .train-card:active{transform:translateY(3px);box-shadow:0 1px 0 #dbe8ff}
+  .train-card.used{opacity:.3;pointer-events:none;box-shadow:none;text-decoration:line-through}
+
+  /* ── OX 스피드 퀴즈 ── */
+  .ox-card{
+    padding:16px 14px 14px;border-radius:20px;text-align:center;
+    background:linear-gradient(160deg,#fffdf6,#fff0f4);border:2px solid #ffe0e6;
+  }
+  .ox-word{display:block;margin:6px 0 8px;font-size:28px;font-weight:900;letter-spacing:-.05em;line-height:1.25;color:#33261f}
+  .ox-meaning{margin:0;font-size:15px;font-weight:700;line-height:1.55;color:#4c3d34;letter-spacing:-.02em}
+  .ox-vs{display:inline-block;margin-top:10px;font-size:11.5px;font-weight:900;color:#b7a493;letter-spacing:.02em}
+  .ox-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+  .ox-btn{
+    height:100px;border:none;border-radius:22px;color:#fff;line-height:1;
+    font-size:38px;font-weight:900;
+    font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+    transition:transform .1s ease,filter .15s ease;
+  }
+  .ox-btn span{display:block;margin-top:3px;font-size:10.5px;font-weight:900;letter-spacing:.06em;opacity:.95;font-family:inherit}
+  .ox-btn:active{transform:translateY(4px)}
+  .ox-btn.o{background:linear-gradient(160deg,#5fe0bf,#22c19c);box-shadow:0 7px 0 #149a7e}
+  .ox-btn.x{background:linear-gradient(160deg,#ffa08b,#ff6f4d);box-shadow:0 7px 0 #d9542f}
+  .ox-btn:disabled{filter:saturate(.55) opacity(.6);transform:none}
+  .combo-badge{
+    display:inline-flex;align-items:center;gap:3px;padding:5px 9px;border-radius:999px;
+    background:#fff1d6;border:2px solid #ffd98a;color:#b26a00;font-size:11.5px;font-weight:900;
+    white-space:nowrap;
+  }
+  .combo-badge.hot{background:#ffe6c7;border-color:#ffbd63;color:#c25c00}
+
+  /* ── 선 잇기 짝맞추기 ── */
+  .line-head{display:flex;gap:34px;margin:0 2px 7px;font-size:11px;font-weight:900;color:#b19c8a;letter-spacing:.03em}
+  .line-head span{flex:1 1 0;text-align:center}
+  .line-board{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px 34px;padding:2px 0 4px}
+  .line-svg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:visible}
+  .link-btn{
+    position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:9px 8px;min-height:58px;border-radius:14px;
+    border:2px solid #efe6da;color:#3b2f28;
+    font-size:12.5px;font-weight:800;line-height:1.35;letter-spacing:-.02em;
+    box-shadow:0 3px 0 #f2e8db;
+    transition:transform .1s ease,background .15s ease,border-color .15s ease;
+  }
+  .link-btn.left{background:#fffdf6}
+  .link-btn.right{background:#f7fbff}
+  .link-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #f2e8db}
+  .link-btn.sel{border-color:#ffb04d;background:#fff6e4;box-shadow:0 3px 0 #ffe0a3}
+  .link-btn.done{border-color:#8fe0cd;background:#e9fbf5;color:#0f7b64;box-shadow:0 3px 0 #b7eadd}
+  .link-btn.err{border-color:#ff9a86;background:#fff1ec;animation:shakeX .35s ease}
+
+  /* ── 토스트 · 축하 효과 ── */
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:96px;
+    z-index:80;
+    transform:translate(-50%,14px);
+    max-width:88vw;
+    padding:12px 16px;
+    border-radius:16px;
+    background:rgba(59,47,40,.94);
+    color:#fff;
+    font-size:13.5px;
+    font-weight:800;
+    letter-spacing:-.02em;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .22s ease,transform .22s ease;
+    box-shadow:0 10px 24px rgba(0,0,0,.22);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .fx-layer{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+  .spark{
+    position:absolute;
+    font-size:20px;
+    will-change:transform,opacity;
+    animation:sparkFly .85s ease-out forwards;
+  }
+  @keyframes sparkFly{
+    0%{transform:translate(-50%,-50%) scale(.3);opacity:1}
+    100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.15) rotate(var(--rot));opacity:0}
+  }
+  .confetti{
+    position:absolute;
+    top:-30px;
+    font-size:18px;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    0%{transform:translateY(0) rotate(0deg);opacity:1}
+    100%{transform:translateY(110vh) rotate(540deg);opacity:.9}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+  @media (max-width:360px){
+    .brand-text h1{font-size:15px}
+    .brand-text p{display:none}
+    .stat{font-size:13px;padding:6px 8px}
+    .word{font-size:17.5px}
+    .q-text{font-size:23px}
+    .q-text.situation{font-size:15.5px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">🧩</div>
+      <div class="brand-text">
+        <h1>말랑말랑 말놀이터</h1>
+        <p>사자성어 · 속담 · 관용구</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat star" id="statStar" title="모은 별" aria-label="모은 별">
+        <span class="ico" aria-hidden="true">⭐</span><span class="num" id="starCount">0</span>
+      </div>
+      <div class="stat streak" id="statStreak" title="연속 정답" aria-label="연속 정답">
+        <span class="ico" aria-hidden="true">🔥</span><span class="num" id="streakCount">0</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- ① 카드 배움터 -->
+    <section class="screen active" id="screen-learn" aria-label="카드 배움터">
+      <div class="intro">
+        <h2>오늘의 말놀이 📚</h2>
+        <p>궁금한 카드를 찾아 읽어 보세요. 🔊를 누르면 소리로도 들려줘요.</p>
+      </div>
+      <div class="chips" id="learnChips" role="group" aria-label="종류 고르기">
+        <button class="chip" type="button" data-filter="전체" aria-pressed="true">전체</button>
+        <button class="chip" type="button" data-filter="사자성어" aria-pressed="false">사자성어</button>
+        <button class="chip" type="button" data-filter="속담" aria-pressed="false">속담</button>
+        <button class="chip" type="button" data-filter="관용구" aria-pressed="false">관용구</button>
+      </div>
+      <p class="list-count" id="learnCount"></p>
+      <div class="learn-list" id="learnList"></div>
+    </section>
+
+    <!-- ② 재미있는 퀴즈 -->
+    <section class="screen" id="screen-quiz" aria-label="재미있는 퀴즈">
+      <div id="quizIntro" class="panel quiz-intro">
+        <div class="big-emoji" aria-hidden="true">🎯</div>
+        <h2>재미있는 퀴즈</h2>
+        <p>10문제에 도전해 보세요. 맞히면 별을 하나씩 받아요!</p>
+        <span class="cat-label">무엇으로 풀어 볼까요?</span>
+        <div class="cat-row" id="quizCats" role="group" aria-label="퀴즈 종류">
+          <button class="chip active" type="button" data-cat="전체" aria-pressed="true">전체</button>
+          <button class="chip" type="button" data-cat="사자성어" aria-pressed="false">사자성어</button>
+          <button class="chip" type="button" data-cat="속담" aria-pressed="false">속담</button>
+          <button class="chip" type="button" data-cat="관용구" aria-pressed="false">관용구</button>
+        </div>
+        <button class="big-btn" type="button" id="quizStartBtn">퀴즈 시작!</button>
+        <p class="best-line" id="quizBestLine"></p>
+      </div>
+
+      <div id="quizPlay" class="panel hidden">
+        <div class="quiz-top">
+          <div class="bar"><div class="bar-fill" id="quizBar"></div></div>
+          <span class="counter" id="quizCounter">1 / 10</span>
+        </div>
+        <div class="qcard">
+          <span class="q-kind kind-meaning" id="qKind">뜻 고르기</span>
+          <p class="q-label" id="qLabel"></p>
+          <p class="q-text" id="qText"></p>
+          <p class="q-sub" id="qSub"></p>
+        </div>
+        <button class="hint-btn" type="button" id="hintBtn">💡 힌트 보기</button>
+        <p class="hint-box hidden" id="hintBox"></p>
+        <div class="choices" id="choices"></div>
+        <div class="feedback hidden" id="feedback" role="status" aria-live="polite"></div>
+        <div style="margin-top:12px" id="nextWrap" class="hidden">
+          <button class="big-btn" type="button" id="nextBtn">다음 문제 →</button>
+        </div>
+      </div>
+
+      <div id="quizResult" class="panel quiz-result hidden">
+        <div class="score-ring" id="scoreRing">
+          <span class="score-in">
+            <span class="big" id="scoreBig">7/10</span>
+            <span class="small">맞힌 문제</span>
+          </span>
+        </div>
+        <h2 id="resultTitle">아주 잘했어요!</h2>
+        <p id="resultDesc"></p>
+        <div class="result-chips">
+          <span class="pill" id="resultStars">⭐ 별 7개</span>
+          <span class="pill blue" id="resultStreak">🔥 최고 5연속</span>
+        </div>
+        <div class="btn-row">
+          <button class="big-btn" type="button" id="retryBtn">한 번 더 풀기</button>
+          <button class="big-btn ghost" type="button" id="toLearnBtn">카드 배우러 가기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ③ 게임 놀이터 -->
+    <section class="screen" id="screen-games" aria-label="게임 놀이터">
+
+      <!-- 3-0 놀이 선택 -->
+      <div id="gameHub" class="panel gview">
+        <div class="quiz-intro" style="padding:2px 2px 10px">
+          <div class="big-emoji" aria-hidden="true">🎮</div>
+          <h2>게임 놀이터</h2>
+          <p>다섯 가지 놀이로 사자성어·속담·관용구를 익혀요. 맞히면 별이 하나씩 쌓여요!</p>
+        </div>
+        <div class="hub-list" id="hubList">
+          <button class="hub-card" type="button" data-game="match">
+            <span class="hub-ico" aria-hidden="true">🃏</span>
+            <span class="hub-body">
+              <h3>짝꿍 카드 뒤집기</h3>
+              <p>말 카드와 뜻 카드를 뒤집어 짝을 맞춰요</p>
+            </span>
+            <span class="hub-go" aria-hidden="true">›</span>
+          </button>
+          <button class="hub-card" type="button" data-game="blank">
+            <span class="hub-ico" aria-hidden="true">🧩</span>
+            <span class="hub-body">
+              <h3>빈칸 톡톡 채우기</h3>
+              <p>빠진 글자를 보기 타일에서 골라 채워요</p>
+            </span>
+            <span class="hub-go" aria-hidden="true">›</span>
+          </button>
+          <button class="hub-card" type="button" data-game="train">
+            <span class="hub-ico" aria-hidden="true">🚂</span>
+            <span class="hub-body">
+              <h3>말 순서 기차</h3>
+              <p>섞인 카드를 차례대로 놓아 문장을 완성해요</p>
+            </span>
+            <span class="hub-go" aria-hidden="true">›</span>
+          </button>
+          <button class="hub-card" type="button" data-game="ox">
+            <span class="hub-ico" aria-hidden="true">⭕</span>
+            <span class="hub-body">
+              <h3>OX 스피드 퀴즈</h3>
+              <p>표현과 뜻이 맞는지 빠르게 O·X로 답해요</p>
+            </span>
+            <span class="hub-go" aria-hidden="true">›</span>
+          </button>
+          <button class="hub-card" type="button" data-game="line">
+            <span class="hub-ico" aria-hidden="true">🔗</span>
+            <span class="hub-body">
+              <h3>선 잇기 짝맞추기</h3>
+              <p>말과 뜻을 차례로 눌러 줄로 이어요</p>
+            </span>
+            <span class="hub-go" aria-hidden="true">›</span>
+          </button>
+        </div>
+        <p class="hub-line" id="hubLine"></p>
+      </div>
+
+      <!-- 3-1 짝꿍 카드 뒤집기 -->
+      <div id="matchIntro" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+          <span class="game-step" id="matchClears"></span>
+        </div>
+        <div class="quiz-intro" style="padding:2px 2px 12px">
+          <div class="big-emoji" aria-hidden="true">🃏</div>
+          <h2>짝꿍 카드 뒤집기</h2>
+          <p>표현 카드와 뜻 카드를 뒤집어서 짝을 맞춰 보세요!</p>
+        </div>
+        <span class="cat-label">난이도를 골라요</span>
+        <div class="level-row" id="levelRow">
+          <button class="level-btn on" type="button" data-level="6">
+            <span class="lv-emoji" aria-hidden="true">🌱</span>
+            <span>쉬움</span>
+            <span class="lv-sub">6장 · 3쌍</span>
+          </button>
+          <button class="level-btn" type="button" data-level="8">
+            <span class="lv-emoji" aria-hidden="true">🌻</span>
+            <span>보통</span>
+            <span class="lv-sub">8장 · 4쌍</span>
+          </button>
+          <button class="level-btn" type="button" data-level="12">
+            <span class="lv-emoji" aria-hidden="true">🚀</span>
+            <span>도전</span>
+            <span class="lv-sub">12장 · 6쌍</span>
+          </button>
+        </div>
+        <button class="big-btn mint" type="button" id="matchStartBtn">카드 섞어서 시작!</button>
+        <p class="best-line" id="matchBestLine"></p>
+      </div>
+
+      <div id="matchPlay" class="panel gview hidden">
+        <div class="mem-top">
+          <span class="mem-info" id="memInfo">짝 <b>0</b> / 3</span>
+          <button class="mini-btn" type="button" id="memRestart">🔄 다시 섞기</button>
+        </div>
+        <p class="mem-help">말 카드 하나와 뜻 카드 하나를 뒤집어 짝을 맞춰 보세요.</p>
+        <div class="mem-board" id="memBoard"></div>
+      </div>
+
+      <div id="matchDone" class="done-card gview hidden">
+        <div class="big-emoji" aria-hidden="true">🎉</div>
+        <h2>짝을 모두 찾았어요!</h2>
+        <p id="doneDesc">별 3개를 받았어요.</p>
+        <div class="done-stars" id="doneStars">⭐⭐⭐</div>
+        <div class="btn-row">
+          <button class="big-btn mint" type="button" id="memAgainBtn">한 번 더 하기</button>
+          <button class="big-btn ghost" type="button" id="memLevelBtn">난이도 바꾸기</button>
+          <button class="big-btn ghost" type="button" data-back>게임 놀이터로</button>
+        </div>
+      </div>
+
+      <!-- 3-2 빈칸 톡톡 채우기 -->
+      <div id="blankIntro" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+        </div>
+        <div class="quiz-intro" style="padding:2px 2px 10px">
+          <div class="big-emoji" aria-hidden="true">🧩</div>
+          <h2>빈칸 톡톡 채우기</h2>
+          <p>말에서 빠진 글자를 아래 보기 타일에서 골라 톡톡 눌러 완성해요!</p>
+        </div>
+        <div class="game-hint">예: 소 잃고 <b>[ ? ]</b> 고친다 · 유 비 무 <b>[ ? ]</b></div>
+        <span class="cat-label">한 판에 8문제예요</span>
+        <button class="big-btn" type="button" id="blankStartBtn">빈칸 채우기 시작!</button>
+        <p class="best-line" id="blankBestLine"></p>
+      </div>
+
+      <div id="blankPlay" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+          <h2 class="game-name">빈칸 톡톡</h2>
+          <span class="game-step" id="blankStep">1 / 8</span>
+        </div>
+        <div class="small-bar">
+          <div class="bar"><div class="bar-fill" id="blankBar"></div></div>
+        </div>
+        <div class="blank-line" id="blankLine"></div>
+        <p class="game-hint" id="blankHint"></p>
+        <div class="tiles" id="blankTiles"></div>
+        <div class="feedback hidden" id="blankFeedback" role="status" aria-live="polite"></div>
+        <div id="blankNextWrap" class="hidden" style="margin-top:12px">
+          <button class="big-btn" type="button" id="blankNextBtn">다음 문제 →</button>
+        </div>
+      </div>
+
+      <div id="blankDone" class="done-card gview hidden">
+        <div class="big-emoji" aria-hidden="true">🎉</div>
+        <h2>빈칸을 모두 채웠어요!</h2>
+        <p id="blankDoneDesc"></p>
+        <div class="done-stars" id="blankDoneStars"></div>
+        <div class="btn-row">
+          <button class="big-btn mint" type="button" id="blankAgainBtn">한 번 더 하기</button>
+          <button class="big-btn ghost" type="button" data-back>게임 놀이터로</button>
+        </div>
+      </div>
+
+      <!-- 3-3 말 순서 기차 -->
+      <div id="trainIntro" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+        </div>
+        <div class="quiz-intro" style="padding:2px 2px 10px">
+          <div class="big-emoji" aria-hidden="true">🚂</div>
+          <h2>말 순서 기차</h2>
+          <p>섞여 있는 카드를 올바른 순서대로 눌러 문장을 완성해요!</p>
+        </div>
+        <div class="game-hint">놓은 카드를 다시 누르면 기차에서 뺄 수 있어요. 완성하면 뜻과 함께 별을 받아요!</div>
+        <span class="cat-label">한 판에 6문제예요</span>
+        <button class="big-btn mint" type="button" id="trainStartBtn">기차 만들기 시작!</button>
+        <p class="best-line" id="trainBestLine"></p>
+      </div>
+
+      <div id="trainPlay" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+          <h2 class="game-name">말 순서 기차</h2>
+          <span class="game-step" id="trainStep">1 / 6</span>
+        </div>
+        <div class="train-track" id="trainTrack"></div>
+        <p class="game-note" style="margin:8px 0 0">놓은 카드를 누르면 다시 뺄 수 있어요.</p>
+        <div class="train-pool" id="trainPool"></div>
+        <div style="margin-top:14px">
+          <button class="big-btn mint" type="button" id="trainCheckBtn">기차 출발! 🚂</button>
+        </div>
+        <div class="feedback hidden" id="trainFeedback" role="status" aria-live="polite"></div>
+        <div id="trainNextWrap" class="hidden" style="margin-top:12px">
+          <button class="big-btn" type="button" id="trainNextBtn">다음 문제 →</button>
+        </div>
+      </div>
+
+      <div id="trainDone" class="done-card gview hidden">
+        <div class="big-emoji" aria-hidden="true">🚂</div>
+        <h2>기차가 모두 출발했어요!</h2>
+        <p id="trainDoneDesc"></p>
+        <div class="done-stars" id="trainDoneStars"></div>
+        <div class="btn-row">
+          <button class="big-btn mint" type="button" id="trainAgainBtn">한 번 더 하기</button>
+          <button class="big-btn ghost" type="button" data-back>게임 놀이터로</button>
+        </div>
+      </div>
+
+      <!-- 3-4 OX 스피드 퀴즈 -->
+      <div id="oxIntro" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+        </div>
+        <div class="quiz-intro" style="padding:2px 2px 10px">
+          <div class="big-emoji" aria-hidden="true">⭕</div>
+          <h2>OX 스피드 퀴즈</h2>
+          <p>표현과 뜻이 맞게 짝지어졌는지 O·X로 빠르게 답해요!</p>
+        </div>
+        <div class="game-hint">8문제 세트예요. 연속으로 맞히면 콤보가 쌓이고, 빠르게 맞히면 더 신나요!</div>
+        <span class="cat-label">준비되면 시작해요</span>
+        <button class="big-btn" type="button" id="oxStartBtn">스피드 퀴즈 시작!</button>
+        <p class="best-line" id="oxBestLine"></p>
+      </div>
+
+      <div id="oxPlay" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+          <h2 class="game-name">OX 퀴즈</h2>
+          <span class="combo-badge" id="oxCombo">🔥 콤보 0</span>
+        </div>
+        <div class="small-bar">
+          <div class="bar"><div class="bar-fill" id="oxBar"></div></div>
+          <span class="counter" id="oxCounter">1 / 8</span>
+        </div>
+        <div class="ox-card">
+          <span class="q-kind kind-meaning" id="oxKind">짝 확인</span>
+          <span class="ox-word" id="oxWord"></span>
+          <p class="ox-meaning" id="oxMeaning"></p>
+          <span class="ox-vs">이 표현과 뜻이 맞을까요?</span>
+        </div>
+        <div class="ox-btns">
+          <button class="ox-btn o" type="button" id="oxBtnO" aria-label="맞아요 O">O<span>맞아요</span></button>
+          <button class="ox-btn x" type="button" id="oxBtnX" aria-label="달라요 X">X<span>달라요</span></button>
+        </div>
+        <div class="feedback hidden" id="oxFeedback" role="status" aria-live="polite"></div>
+        <div id="oxNextWrap" class="hidden" style="margin-top:12px">
+          <button class="big-btn" type="button" id="oxNextBtn">다음 문제 →</button>
+        </div>
+      </div>
+
+      <div id="oxDone" class="done-card gview hidden">
+        <div class="big-emoji" aria-hidden="true">⚡</div>
+        <h2>스피드 퀴즈 끝!</h2>
+        <p id="oxDoneDesc"></p>
+        <div class="done-stars" id="oxDoneStars"></div>
+        <div class="btn-row">
+          <button class="big-btn mint" type="button" id="oxAgainBtn">한 번 더 하기</button>
+          <button class="big-btn ghost" type="button" data-back>게임 놀이터로</button>
+        </div>
+      </div>
+
+      <!-- 3-5 선 잇기 짝맞추기 -->
+      <div id="lineIntro" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+        </div>
+        <div class="quiz-intro" style="padding:2px 2px 10px">
+          <div class="big-emoji" aria-hidden="true">🔗</div>
+          <h2>선 잇기 짝맞추기</h2>
+          <p>왼쪽에 말, 오른쪽에 뜻이 있어요. 양쪽을 차례로 눌러 짝을 이어 보세요!</p>
+        </div>
+        <div class="game-hint">짝이 맞으면 초록 줄이 그어져요. 한 판에 4쌍, 모두 3판이에요.</div>
+        <span class="cat-label">줄을 이어 볼까요?</span>
+        <button class="big-btn mint" type="button" id="lineStartBtn">선 잇기 시작!</button>
+        <p class="best-line" id="lineBestLine"></p>
+      </div>
+
+      <div id="linePlay" class="panel gview hidden">
+        <div class="game-top">
+          <button class="back-btn" type="button" data-back>← 놀이터</button>
+          <h2 class="game-name">선 잇기</h2>
+          <span class="game-step" id="lineStep">1판 / 3</span>
+        </div>
+        <p class="game-note">왼쪽 말과 짝이 맞는 뜻을 차례로 눌러 줄을 이어 보세요.</p>
+        <div class="line-head"><span>말</span><span>뜻</span></div>
+        <div class="line-board" id="lineBoard">
+          <svg class="line-svg" id="lineSvg" aria-hidden="true"></svg>
+        </div>
+        <div class="feedback hidden" id="lineFeedback" role="status" aria-live="polite"></div>
+        <div id="lineNextWrap" class="hidden" style="margin-top:12px">
+          <button class="big-btn" type="button" id="lineNextBtn">다음 판 →</button>
+        </div>
+      </div>
+
+      <div id="lineDone" class="done-card gview hidden">
+        <div class="big-emoji" aria-hidden="true">🎉</div>
+        <h2>줄을 모두 이었어요!</h2>
+        <p id="lineDoneDesc"></p>
+        <div class="done-stars" id="lineDoneStars"></div>
+        <div class="btn-row">
+          <button class="big-btn mint" type="button" id="lineAgainBtn">한 번 더 하기</button>
+          <button class="big-btn ghost" type="button" data-back>게임 놀이터로</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" role="tablist" aria-label="놀이 고르기">
+    <button class="tab active" type="button" role="tab" id="tab-learn" data-screen="learn" aria-selected="true">
+      <span class="tab-ico" aria-hidden="true">📚</span><span>카드 배움터</span>
+    </button>
+    <button class="tab" type="button" role="tab" id="tab-quiz" data-screen="quiz" aria-selected="false">
+      <span class="tab-ico" aria-hidden="true">🎯</span><span>재미있는 퀴즈</span>
+    </button>
+    <button class="tab" type="button" role="tab" id="tab-games" data-screen="games" aria-selected="false">
+      <span class="tab-ico" aria-hidden="true">🎮</span><span>게임 놀이터</span>
+    </button>
+  </nav>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ════════════════════════════════════════════
+     콘텐츠 데이터 (사자성어 15 · 속담 15 · 관용구 15)
+     meaning : 배움 카드에 보이는 쉬운 뜻
+     short   : 한 줄 뜻 (퀴즈 보기 · 짝꿍 카드)
+     hint    : 힌트 / 짝꿍 카드 핵심 힌트
+     example : 표현이 들어간 아이 눈높이 예문
+     situation: 표현 없이 상황만 (퀴즈용)
+     wrong   : 뜻 고르기 퀴즈의 오답 3개
+     wrongWords: 말 고르기 퀴즈의 오답 3개
+     ════════════════════════════════════════════ */
+  var DATA = [
+    /* ── 사자성어 ── */
+    {
+      id: 'sj1', type: '사자성어', word: '일석이조', hanja: '一石二鳥',
+      meaning: '돌 하나를 던져 새 두 마리를 잡는다는 뜻이에요. 한 가지 일을 해서 두 가지 좋은 일을 함께 얻는 것을 말해요.',
+      short: '한 번 일해서 두 가지 이득',
+      hint: '돌 하나로 새 두 마리!',
+      example: '놀이터에서 친구도 만나고 운동도 했으니 정말 일석이조야.',
+      situation: '놀이터에서 친구도 만나고 운동도 했어. 한 번에 두 가지 좋은 일을 다 얻은 셈이지.',
+      wrong: ['여럿이 조금씩 모아 큰 도움을 줌', '미리 준비해서 걱정이 없음', '잘하는 사람도 실수함'],
+      wrongWords: ['십시일반', '유비무환', '원숭이도 나무에서 떨어진다']
+    },
+    {
+      id: 'sj2', type: '사자성어', word: '유비무환', hanja: '有備無患',
+      meaning: '미리 준비해 두면 걱정할 일이 없다는 뜻이에요.',
+      short: '미리 준비하면 걱정 없음',
+      hint: '미리 준비하면 걱정이 없어요',
+      example: '소풍 전날 우산을 미리 챙겨 둔 건 유비무환이었어. 다음 날 정말 비가 왔거든.',
+      situation: '소풍 전날 우산을 미리 챙겨 두었어. 다음 날 정말 비가 왔지만 하나도 걱정되지 않았지.',
+      wrong: ['한 번에 두 가지 이득을 봄', '옛것을 익혀 새것을 깨달음', '많으면 많을수록 좋음'],
+      wrongWords: ['일석이조', '온고지신', '다다익선']
+    },
+    {
+      id: 'sj3', type: '사자성어', word: '백문이 불여일견', hanja: '百聞이不如一見',
+      meaning: '백 번 듣는 것보다 한 번 직접 보는 것이 낫다는 뜻이에요.',
+      short: '듣기보다 직접 보는 게 나음',
+      hint: '백 번 듣기보다 한 번 보기',
+      example: '백문이 불여일견이라고, 설명만 듣던 박물관에 직접 가 보니 훨씬 재미있었어.',
+      situation: '설명만 백 번쯤 들었는데도 잘 몰랐어. 그런데 직접 가서 보니까 바로 알겠더라.',
+      wrong: ['꾸준히 하면 어려운 일도 이룸', '여럿이 힘을 모으면 더 쉬움', '말은 아주 빨리 퍼짐'],
+      wrongWords: ['우공이산', '백지장도 맞들면 낫다', '발 없는 말이 천 리 간다']
+    },
+    {
+      id: 'sj4', type: '사자성어', word: '동문서답', hanja: '東問西答',
+      meaning: '동쪽을 물었는데 서쪽이라고 대답한다는 뜻으로, 묻는 말과 상관없는 대답을 하는 것이에요.',
+      short: '묻는 말과 상관없는 대답',
+      hint: '동쪽을 물었는데 서쪽 대답',
+      example: '오늘 뭐 먹었니 하고 물었더니 숙제 다 했어 하고 대답하니 완전 동문서답이야.',
+      situation: '오늘 급식 뭐 먹었니 하고 물었는데 ‘체육 시간에 달리기 했어’ 하고 대답했어.',
+      wrong: ['말 없이도 마음이 통함', '아는 사람이 아주 많음', '잘못을 고쳐 착해짐'],
+      wrongWords: ['이심전심', '발이 넓다', '개과천선']
+    },
+    {
+      id: 'sj5', type: '사자성어', word: '십시일반', hanja: '十匙一飯',
+      meaning: '열 숟가락의 밥이 모여 한 그릇이 된다는 뜻으로, 여러 사람이 조금씩 힘을 모아 돕는 것이에요.',
+      short: '여럿이 조금씩 모아 도움',
+      hint: '열 숟가락이 모여 한 그릇',
+      example: '친구들이 십시일반으로 용돈을 모아서 다친 강아지 병원비를 도왔어.',
+      situation: '우리 반 모두가 천 원씩만 냈는데, 모아 보니 꽤 많은 돈이 되어 어려운 친구를 도울 수 있었어.',
+      wrong: ['혼자서 모든 일을 다 해냄', '시작하면 절반은 이룬 셈', '좋은 일에 좋은 일이 더해짐'],
+      wrongWords: ['우공이산', '시작이 반이다', '금상첨화']
+    },
+    {
+      id: 'sj6', type: '사자성어', word: '우공이산', hanja: '愚公移山',
+      meaning: '우공이라는 사람이 산을 옮겼다는 뜻으로, 힘들어도 꾸준히 하면 어려운 일도 이룰 수 있다는 말이에요.',
+      short: '꾸준히 하면 어려운 일도 이룸',
+      hint: '꾸준히 하면 산도 옮겨요',
+      example: '매일 한 장씩 그림을 그리면 우공이산처럼 멋진 그림책 한 권을 만들 수 있을 거야.',
+      situation: '매일 한 장씩 그림을 그렸어. 처음엔 별것 아니었지만 일 년 뒤에는 두꺼운 그림책이 되었어.',
+      wrong: ['한 번에 두 가지 이득을 봄', '겉만 보고 속은 모름', '좋은 일 뒤에 나쁜 일이 옴'],
+      wrongWords: ['일석이조', '수박 겉 핥기', '새옹지마']
+    },
+    {
+      id: 'sj7', type: '사자성어', word: '금상첨화', hanja: '錦上添花',
+      meaning: '비단 위에 꽃을 더한다는 뜻으로, 좋은 일에 또 좋은 일이 더해지는 것이에요.',
+      short: '좋은 일에 좋은 일이 더해짐',
+      hint: '좋은 일 위에 꽃 한 송이',
+      example: '소풍 날 날씨도 맑은데 간식까지 생겼으니 금상첨화야.',
+      situation: '생일날 친구들이 다 와서 신났는데, 엄마가 케이크까지 사 오셨어.',
+      wrong: ['나쁜 일이 좋은 일로 바뀜', '미리 준비해 걱정이 없음', '옛것을 익혀 새것을 앎'],
+      wrongWords: ['전화위복', '유비무환', '온고지신']
+    },
+    {
+      id: 'sj8', type: '사자성어', word: '청출어람', hanja: '靑出於藍',
+      meaning: '쪽이라는 풀에서 나온 푸른 물이 그 풀보다 더 푸르다는 뜻으로, 제자가 스승보다 더 뛰어난 것이에요.',
+      short: '제자가 스승보다 더 뛰어남',
+      hint: '제자가 스승보다 푸르러요',
+      example: '청출어람이라고, 내가 가르친 동생이 이제는 나보다 그림을 잘 그려.',
+      situation: '내가 피아노를 가르쳐 준 동생이 이제는 나보다 훨씬 잘 쳐.',
+      wrong: ['가까운 것이 오히려 안 보임', '남의 말을 쉽게 믿음', '많으면 많을수록 좋음'],
+      wrongWords: ['등잔 밑이 어둡다', '귀가 얇다', '다다익선']
+    },
+    {
+      id: 'sj9', type: '사자성어', word: '온고지신', hanja: '溫故知新',
+      meaning: '옛것을 잘 익히고 그것을 바탕으로 새로운 것을 깨닫는다는 뜻이에요.',
+      short: '옛것을 익혀 새것을 깨달음',
+      hint: '옛것을 익혀 새것을 알아요',
+      example: '작년에 배운 받아쓰기를 다시 보니 온고지신이라 새로 알게 된 것도 많았어.',
+      situation: '작년에 배운 노래를 다시 부르며 연습했더니, 그때는 몰랐던 뜻을 새로 알게 되었어.',
+      wrong: ['듣기보다 직접 보는 게 나음', '아주 바빠서 쉴 틈 없음', '여럿이 조금씩 모아 도움'],
+      wrongWords: ['백문이 불여일견', '눈코 뜰 새 없다', '십시일반']
+    },
+    {
+      id: 'sj10', type: '사자성어', word: '새옹지마', hanja: '塞翁之馬',
+      meaning: '변방에 사는 노인의 말에서 나온 말로, 좋은 일이 나쁜 일이 되기도 하고 나쁜 일이 좋은 일이 되기도 한다는 뜻이에요.',
+      short: '좋은 일과 나쁜 일이 오락가락',
+      hint: '좋고 나쁨이 오락가락',
+      example: '새옹지마라고, 시험을 못 봤지만 그 덕에 더 열심히 공부하게 되었어.',
+      situation: '축구 시합에서 떨어졌는데, 그날 대신 간 학원에서 정말 좋아하는 친구를 만났어.',
+      wrong: ['여럿이 조금씩 모아 돕는 것', '결심이 사흘을 못 넘김', '아주 급한 일이 생김'],
+      wrongWords: ['십시일반', '작심삼일', '발등에 불이 떨어졌다']
+    },
+    {
+      id: 'sj11', type: '사자성어', word: '작심삼일', hanja: '作心三日',
+      meaning: '마음을 먹은 지 사흘을 넘기지 못한다는 뜻으로, 결심이 오래가지 않는 것이에요.',
+      short: '결심이 사흘을 못 넘김',
+      hint: '결심이 사흘도 못 가요',
+      example: '줄넘기 매일 하기로 했는데 작심삼일이 되지 않게 오늘도 나가서 뛰었어.',
+      situation: '어제부터 팔굽혀펴기를 하기로 했는데, 오늘 벌써 그만두고 싶어.',
+      wrong: ['꾸준히 해서 큰일을 이룸', '한 번 시작하면 끝까지 함', '미리 준비해 걱정이 없음'],
+      wrongWords: ['우공이산', '시작이 반이다', '유비무환']
+    },
+    {
+      id: 'sj12', type: '사자성어', word: '이심전심', hanja: '以心傳心',
+      meaning: '마음에서 마음으로 전한다는 뜻으로, 말하지 않아도 서로의 마음이 잘 통하는 것이에요.',
+      short: '말 없이도 마음이 통함',
+      hint: '말 안 해도 마음이 통해요',
+      example: '단짝 친구와는 눈빛만 봐도 이심전심으로 무슨 생각인지 알 수 있어.',
+      situation: '제일 친한 친구랑은 말을 하지 않아도 눈만 보면 무슨 생각인지 알아.',
+      wrong: ['묻는 말과 다른 대답을 함', '말이 아주 빨리 퍼짐', '비밀을 잘 지킴'],
+      wrongWords: ['동문서답', '발 없는 말이 천 리 간다', '입이 무겁다']
+    },
+    {
+      id: 'sj13', type: '사자성어', word: '전화위복', hanja: '轉禍爲福',
+      meaning: '나쁜 일이 오히려 좋은 일로 바뀐다는 뜻이에요.',
+      short: '나쁜 일이 좋은 일로 바뀜',
+      hint: '화가 바뀌어 복이 돼요',
+      example: '버스를 놓쳐서 속상했는데, 다음 버스에서 오랜만에 제일 친한 친구를 만나서 전화위복이 되었어.',
+      situation: '버스를 놓쳐서 속상했는데, 다음 버스에서 오랜만에 제일 친한 친구를 만났어.',
+      wrong: ['좋은 일에 좋은 일이 더해짐', '미리 준비하면 걱정 없음', '여럿이 힘을 모아 이룸'],
+      wrongWords: ['금상첨화', '유비무환', '백지장도 맞들면 낫다']
+    },
+    {
+      id: 'sj14', type: '사자성어', word: '개과천선', hanja: '改過遷善',
+      meaning: '잘못을 고치고 착한 사람이 된다는 뜻이에요.',
+      short: '잘못을 고쳐 착해짐',
+      hint: '잘못을 고치고 착해져요',
+      example: '친구를 놀리던 아이가 개과천선해서 이제는 먼저 도와주는 착한 친구가 되었어.',
+      situation: '친구 물건을 몰래 가져갔던 아이가 잘못을 뉘우치고, 이제는 잃어버린 물건을 찾아 주는 아이가 되었어.',
+      wrong: ['어릴 때 버릇은 평생 감', '남의 말을 쉽게 믿음', '아는 사람이 아주 많음'],
+      wrongWords: ['세 살 버릇 여든까지 간다', '귀가 얇다', '발이 넓다']
+    },
+    {
+      id: 'sj15', type: '사자성어', word: '다다익선', hanja: '多多益善',
+      meaning: '많으면 많을수록 좋다는 뜻이에요.',
+      short: '많으면 많을수록 좋음',
+      hint: '많을수록 더 좋아요',
+      example: '칭찬은 다다익선이라서 많이 들을수록 기분이 좋아.',
+      situation: '이 책도 읽고 저 책도 읽었어. 읽으면 읽을수록 더 많이 알게 되니까 좋아.',
+      wrong: ['작은 것도 모으면 커짐', '많으면 오히려 나빠짐', '한 번에 두 가지 이득'],
+      wrongWords: ['티끌 모아 태산', '천 리 길도 한 걸음부터', '일석이조']
+    },
+
+    /* ── 속담 ── */
+    {
+      id: 'sd1', type: '속담', word: '가는 말이 고와야 오는 말이 곱다', hanja: '',
+      meaning: '내가 남에게 좋은 말을 해야 남도 나에게 좋은 말을 한다는 뜻이에요.',
+      short: '내가 좋은 말을 해야 답도 좋음',
+      hint: '예쁜 말에는 예쁜 답',
+      example: '가는 말이 고와야 오는 말이 곱다고 하니, 먼저 친구에게 다정하게 말해 보자.',
+      situation: '먼저 친구에게 다정하게 인사를 했더니, 친구도 웃으면서 반갑게 인사해 주었어.',
+      wrong: ['나쁜 말은 언젠가 꼭 들킴', '시작하면 절반은 이룬 셈', '겉만 보고 속은 모름'],
+      wrongWords: ['낮말은 새가 듣고 밤말은 쥐가 듣는다', '시작이 반이다', '수박 겉 핥기']
+    },
+    {
+      id: 'sd2', type: '속담', word: '낮말은 새가 듣고 밤말은 쥐가 듣는다', hanja: '',
+      meaning: '낮에 하는 말은 새가 듣고 밤에 하는 말은 쥐가 듣는다는 뜻으로, 남의 흉을 보면 언젠가는 꼭 들킨다는 말이에요.',
+      short: '나쁜 말은 언젠가 꼭 들킴',
+      hint: '몰래 한 말도 꼭 들켜요',
+      example: '낮말은 새가 듣고 밤말은 쥐가 듣는다니, 친구 흉은 아예 하지 말자.',
+      situation: '몰래 친구 흉을 봤는데, 다음 날 그 이야기가 반 전체에 퍼져 있었어.',
+      wrong: ['좋은 말을 해야 좋은 답이 옴', '어릴 때 버릇은 평생 감', '가까운 것이 오히려 안 보임'],
+      wrongWords: ['가는 말이 고와야 오는 말이 곱다', '세 살 버릇 여든까지 간다', '등잔 밑이 어둡다']
+    },
+    {
+      id: 'sd3', type: '속담', word: '시작이 반이다', hanja: '',
+      meaning: '무슨 일이든 시작하기만 하면 절반은 이룬 것과 같다는 뜻이에요.',
+      short: '시작하면 절반은 이룬 셈',
+      hint: '일단 시작하면 반은 끝!',
+      example: '숙제를 펴 놓기만 해도 시작이 반이야. 자, 연필부터 잡자.',
+      situation: '방 청소가 엄청 막막했는데, 책상부터 정리해 보니 금방 끝났어.',
+      wrong: ['끝까지 해야 진짜 실력임', '꾸준히 하면 반드시 이룸', '여럿이 하면 더 쉬움'],
+      wrongWords: ['천 리 길도 한 걸음부터', '열 번 찍어 안 넘어가는 나무 없다', '백지장도 맞들면 낫다']
+    },
+    {
+      id: 'sd4', type: '속담', word: '백지장도 맞들면 낫다', hanja: '',
+      meaning: '아무리 쉬운 일이라도 여럿이 힘을 합하면 더 쉽게 할 수 있다는 뜻이에요.',
+      short: '같이 하면 더 쉽다',
+      hint: '가벼운 종이도 둘이 들면 편해요',
+      example: '백지장도 맞들면 낫다고, 짐을 같이 들었더니 하나도 무겁지 않았어.',
+      situation: '혼자 옮기면 무거운 상자도 둘이 같이 들면 가볍게 옮길 수 있었어.',
+      wrong: ['혼자 해야 실력이 늚', '시작이 가장 중요함', '작은 것도 모으면 커짐'],
+      wrongWords: ['십시일반', '시작이 반이다', '티끌 모아 태산']
+    },
+    {
+      id: 'sd5', type: '속담', word: '천 리 길도 한 걸음부터', hanja: '',
+      meaning: '멀리 가는 길도 첫 한 걸음에서 시작된다는 뜻으로, 큰일도 작은 것부터 차근차근 해야 한다는 말이에요.',
+      short: '먼 길도 첫걸음에서 시작',
+      hint: '먼 길도 첫발부터',
+      example: '천 리 길도 한 걸음부터라니, 오늘은 줄넘기 한 개부터 해 볼래.',
+      situation: '마라톤을 처음 나갔어. 출발선에서 한 걸음을 떼고 나서야 결승선까지 갈 수 있었지.',
+      wrong: ['많으면 많을수록 좋음', '빨리 가야 이기는 것', '한 번에 두 가지 이득'],
+      wrongWords: ['다다익선', '열 번 찍어 안 넘어가는 나무 없다', '일석이조']
+    },
+    {
+      id: 'sd6', type: '속담', word: '티끌 모아 태산', hanja: '',
+      meaning: '아주 작은 티끌도 모으면 큰 산이 된다는 뜻으로, 작은 것도 꾸준히 모으면 크게 된다는 말이에요.',
+      short: '작은 것도 모으면 커짐',
+      hint: '작은 티끌이 산이 돼요',
+      example: '매일 천 원씩 저금했더니 티끌 모아 태산이라 장난감을 살 수 있었어.',
+      situation: '매일 못 쓰는 동전을 하나씩 모았어. 일 년 뒤에는 통이 가득 찼어.',
+      wrong: ['큰일은 작은 일과 상관없음', '많으면 오히려 나빠짐', '한 번에 두 가지 이득'],
+      wrongWords: ['다다익선', '우공이산', '일석이조']
+    },
+    {
+      id: 'sd7', type: '속담', word: '고생 끝에 낙이 온다', hanja: '',
+      meaning: '힘들고 고생스러운 일을 참고 견디면 즐거운 일이 찾아온다는 뜻이에요.',
+      short: '힘든 뒤에 즐거움이 옴',
+      hint: '힘든 뒤에 웃음이 와요',
+      example: '시험 공부는 힘들었지만 고생 끝에 낙이 온다고 좋은 점수를 받았어.',
+      situation: '한 달 동안 매일 연습해서 다리가 힘들었는데, 발표회 날 큰 박수를 받았어.',
+      wrong: ['즐거운 일 뒤에 힘든 일이 옴', '쉬엄쉬엄 해야 오래감', '잘하는 사람도 실수함'],
+      wrongWords: ['새옹지마', '원숭이도 나무에서 떨어진다', '작심삼일']
+    },
+    {
+      id: 'sd8', type: '속담', word: '수박 겉 핥기', hanja: '',
+      meaning: '수박의 겉만 살짝 핥는다는 뜻으로, 속은 모르고 겉만 대충 아는 것을 말해요.',
+      short: '겉만 대충 알고 속은 모름',
+      hint: '겉만 살짝, 속은 몰라요',
+      example: '책 겉표지만 보고 다 읽은 척하는 건 수박 겉 핥기야.',
+      situation: '만화책 첫 장만 보고 ‘이 책 다 알아’ 하고 말했어. 정말 속은 하나도 몰라.',
+      wrong: ['속까지 꼼꼼히 아는 것', '겉과 속이 똑같은 것', '넓은 세상을 아는 사람'],
+      wrongWords: ['우물 안 개구리', '등잔 밑이 어둡다', '발 없는 말이 천 리 간다']
+    },
+    {
+      id: 'sd9', type: '속담', word: '우물 안 개구리', hanja: '',
+      meaning: '우물 안에서 사는 개구리라는 뜻으로, 넓은 세상을 모르고 자기 주변만 아는 사람을 말해요.',
+      short: '좁은 세상만 아는 사람',
+      hint: '우물 안에서만 세상을 알아요',
+      example: '우물 안 개구리처럼 집 안에서만 놀다가는 세상 구경을 못 하겠지.',
+      situation: '내 동네에만 있다 보니 다른 동네가 어떻게 생겼는지 전혀 몰랐어.',
+      wrong: ['세상을 아주 많이 아는 사람', '겉만 보고 아는 척하는 것', '가까운 것을 못 찾는 것'],
+      wrongWords: ['수박 겉 핥기', '등잔 밑이 어둡다', '발이 넓다']
+    },
+    {
+      id: 'sd10', type: '속담', word: '발 없는 말이 천 리 간다', hanja: '',
+      meaning: '발이 없는 말도 멀리까지 간다는 뜻으로, 한 번 한 말은 아주 빠르게 퍼진다는 말이에요.',
+      short: '말은 아주 빨리 퍼짐',
+      hint: '소문은 다리 없이 달려요',
+      example: '발 없는 말이 천 리 간다더니, 내가 한 이야기가 벌써 옆 반까지 퍼졌대.',
+      situation: '쉬는 시간에 조용히 한 이야기가 하교할 때는 다른 반 친구도 알고 있었어.',
+      wrong: ['뛰는 사람이 더 빠름', '멀리 가려면 말을 타야 함', '나쁜 말은 하지 말아야 함'],
+      wrongWords: ['입이 무겁다', '가는 말이 고와야 오는 말이 곱다', '천 리 길도 한 걸음부터']
+    },
+    {
+      id: 'sd11', type: '속담', word: '세 살 버릇 여든까지 간다', hanja: '',
+      meaning: '어릴 때 들인 버릇은 늙어서도 고치기 어렵다는 뜻이에요.',
+      short: '어릴 때 버릇은 평생 감',
+      hint: '어릴 때 버릇은 오래가요',
+      example: '손 씻는 버릇을 어릴 때 잘 들여야 해. 세 살 버릇 여든까지 간다잖아.',
+      situation: '어릴 때부터 손톱을 깨무는 버릇이 있어서, 지금도 자꾸 손톱을 깨물어.',
+      wrong: ['어른이 되면 버릇이 사라짐', '버릇은 하루면 고침', '세 살 때 한 말이 평생 감'],
+      wrongWords: ['작심삼일', '고생 끝에 낙이 온다', '원숭이도 나무에서 떨어진다']
+    },
+    {
+      id: 'sd12', type: '속담', word: '열 번 찍어 안 넘어가는 나무 없다', hanja: '',
+      meaning: '열 번 도끼로 찍으면 넘어가지 않는 나무가 없다는 뜻으로, 꾸준히 계속하면 어려운 일도 이룰 수 있다는 말이에요.',
+      short: '자꾸 하면 어려운 일도 이룸',
+      hint: '자꾸 찍으면 나무도 넘어져요',
+      example: '글쓰기가 어려워도 열 번 찍어 안 넘어가는 나무 없다고, 매일 한 편씩 써 보자.',
+      situation: '처음엔 자전거를 못 탔어. 매일 넘어지고 또 타기를 반복했더니 이제는 잘 타.',
+      wrong: ['한 번에 두 가지를 얻음', '잘하는 사람도 실수함', '나무는 열 번 찍어야 넘어짐'],
+      wrongWords: ['원숭이도 나무에서 떨어진다', '일석이조', '작심삼일']
+    },
+    {
+      id: 'sd13', type: '속담', word: '원숭이도 나무에서 떨어진다', hanja: '',
+      meaning: '나무를 잘 타는 원숭이도 가끔 떨어진다는 뜻으로, 잘하는 사람도 실수할 수 있다는 말이에요.',
+      short: '잘하는 사람도 실수함',
+      hint: '잘하는 사람도 실수해요',
+      example: '원숭이도 나무에서 떨어진다고, 축구를 제일 잘하는 친구도 오늘 골을 놓쳤어.',
+      situation: '받아쓰기 만점을 늘 받던 친구가 이번에 하나를 틀렸어.',
+      wrong: ['잘하는 사람은 실수하지 않음', '떨어진 사람은 못 일어남', '원숭이는 나무를 못 탐'],
+      wrongWords: ['열 번 찍어 안 넘어가는 나무 없다', '고생 끝에 낙이 온다', '등잔 밑이 어둡다']
+    },
+    {
+      id: 'sd14', type: '속담', word: '등잔 밑이 어둡다', hanja: '',
+      meaning: '등잔 바로 밑은 오히려 어둡다는 뜻으로, 가까이 있는 것은 오히려 잘 모르거나 찾기 어렵다는 말이에요.',
+      short: '가까운 것은 오히려 못 찾음',
+      hint: '바로 밑에 있는 걸 못 봐요',
+      example: '안경을 쓰고 있는데 안경을 찾고 있었어. 정말 등잔 밑이 어둡다.',
+      situation: '연필을 찾느라 가방을 다 뒤졌는데, 연필은 내 손에 들려 있었어.',
+      wrong: ['멀리 있는 것이 더 잘 보임', '불을 끄면 어두워짐', '가까운 사이가 더 나쁨'],
+      wrongWords: ['우물 안 개구리', '수박 겉 핥기', '눈코 뜰 새 없다']
+    },
+    {
+      id: 'sd15', type: '속담', word: '말 한마디에 천 냥 빚 갚는다', hanja: '',
+      meaning: '말을 잘하면 천 냥의 빚을 갚는 것처럼 큰 도움을 준다는 뜻으로, 좋은 말의 힘이 크다는 말이에요.',
+      short: '좋은 말은 큰 힘이 있음',
+      hint: '말 한마디가 큰 힘이 돼요',
+      example: '말 한마디에 천 냥 빚 갚는다고, 친구의 따뜻한 말 한마디에 기분이 확 좋아졌어.',
+      situation: '속상해 있던 친구에게 ‘너는 정말 잘하고 있어’라고 말해 주었더니 얼굴에 웃음이 번졌어.',
+      wrong: ['빚은 꼭 갚아야 함', '말이 많으면 손해를 봄', '돈으로는 마음을 살 수 없음'],
+      wrongWords: ['낮말은 새가 듣고 밤말은 쥐가 듣는다', '발 없는 말이 천 리 간다', '입이 무겁다']
+    },
+
+    /* ── 관용구 ── */
+    {
+      id: 'gw1', type: '관용구', word: '발이 넓다', hanja: '',
+      meaning: '아는 사람이 아주 많다는 뜻이에요.',
+      short: '아는 사람이 아주 많음',
+      hint: '아는 사람이 많아요',
+      example: '우리 형은 발이 넓어서 어딜 가나 아는 사람을 만나.',
+      situation: '우리 형은 어딜 가든 누군가를 만나서 인사를 해. 정말 아는 사람이 많아.',
+      wrong: ['발 크기가 아주 큼', '걸음이 아주 빠름', '아는 사람이 거의 없음'],
+      wrongWords: ['손이 크다', '귀가 얇다', '눈이 높다']
+    },
+    {
+      id: 'gw2', type: '관용구', word: '귀가 얇다', hanja: '',
+      meaning: '남의 말을 쉽게 믿는다는 뜻이에요.',
+      short: '남의 말을 쉽게 믿음',
+      hint: '남의 말을 잘 믿어요',
+      example: '엄마는 귀가 얇아서 광고만 보면 사고 싶어 하셔.',
+      situation: '친구가 ‘이게 최고야’ 하면 바로 믿고 사 버려. 다른 사람 말을 너무 쉽게 믿는 것 같아.',
+      wrong: ['귀가 아주 작음', '남의 말을 하나도 안 들음', '소리를 잘 못 들음'],
+      wrongWords: ['입이 무겁다', '눈이 높다', '발이 넓다']
+    },
+    {
+      id: 'gw3', type: '관용구', word: '손이 크다', hanja: '',
+      meaning: '돈이나 물건을 아끼지 않고 크게 쓴다는 뜻이에요.',
+      short: '돈이나 물건을 크게 씀',
+      hint: '씀씀이가 커요',
+      example: '할머니는 손이 크셔서 우리에게 항상 큰 선물을 사 주셔.',
+      situation: '친구가 용돈을 받으면 우리 모두에게 간식을 사 줘. 한 번에 크게 쓰는 편이야.',
+      wrong: ['손이 아주 큼', '일을 아주 잘함', '돈을 하나도 안 씀'],
+      wrongWords: ['발이 넓다', '어깨가 무겁다', '귀가 얇다']
+    },
+    {
+      id: 'gw4', type: '관용구', word: '눈코 뜰 새 없다', hanja: '',
+      meaning: '정신없이 바빠서 잠깐 쉴 겨를도 없다는 뜻이에요.',
+      short: '아주 바빠서 쉴 틈 없음',
+      hint: '눈뜨고 코 쉴 틈도 없어요',
+      example: '이사하는 날이라 눈코 뜰 새 없이 바빴어.',
+      situation: '숙제도 하고 피아노도 치고 준비물도 챙기느라 1분도 쉬지 못했어.',
+      wrong: ['눈과 코가 아픔', '아주 심심하고 할 일이 없음', '눈을 뜨지 못해 잠만 잠'],
+      wrongWords: ['발을 동동 구르다', '손에 땀을 쥐다', '발이 떨어지지 않는다']
+    },
+    {
+      id: 'gw5', type: '관용구', word: '배가 아프다', hanja: '',
+      meaning: '남이 잘되는 것을 보고 시기하는 마음이 생긴다는 뜻이에요. 배가 아플 때 쓰는 말이 아니에요.',
+      short: '남이 잘되면 시기하는 마음',
+      hint: '질투 나서 속이 부글부글',
+      example: '친구가 상을 받았다고 배가 아파하면 안 돼. 같이 축하해 주자.',
+      situation: '짝꿍이 일등을 했어. 축하해 주어야 하는데 마음 한구석이 자꾸 부글부글해.',
+      wrong: ['배탈이 나서 병원에 감', '배가 불러서 편안함', '맛있는 것을 많이 먹음'],
+      wrongWords: ['눈이 높다', '귀가 얇다', '어깨가 무겁다']
+    },
+    {
+      id: 'gw6', type: '관용구', word: '발이 떨어지지 않는다', hanja: '',
+      meaning: '마음이 쏠려서 그 자리를 쉽게 떠나지 못한다는 뜻이에요.',
+      short: '자리를 쉽게 못 떠남',
+      hint: '자리를 뜨기 아쉬워요',
+      example: '재미있는 만화책을 읽고 있는데 발이 떨어지지 않아서 밥 먹으라는 말도 못 들었어.',
+      situation: '친구 집에서 신나는 게임을 하는데, 집에 가야 하는데도 자꾸 다음 판, 다음 판 하게 돼.',
+      wrong: ['발이 아파서 걸을 수 없음', '발을 떼면 넘어짐', '자리를 아주 빨리 뜸'],
+      wrongWords: ['발을 동동 구르다', '발등에 불이 떨어졌다', '눈코 뜰 새 없다']
+    },
+    {
+      id: 'gw7', type: '관용구', word: '눈이 높다', hanja: '',
+      meaning: '보는 눈이 높아서 이것저것 따지는 기준이 높다는 뜻이에요.',
+      short: '고르는 기준이 높음',
+      hint: '고르는 눈이 까다로워요',
+      example: '동생은 눈이 높아서 예쁜 옷을 고를 때 까다롭게 골라.',
+      situation: '친구는 그림을 고를 때 색깔도 보고 모양도 보고 참 까다로워. 쉽게 마음에 드는 걸 못 골라.',
+      wrong: ['키가 아주 큼', '눈이 밝아 잘 봄', '무엇이든 그냥 다 좋다고 함'],
+      wrongWords: ['귀가 얇다', '손이 크다', '입이 무겁다']
+    },
+    {
+      id: 'gw8', type: '관용구', word: '어깨가 무겁다', hanja: '',
+      meaning: '맡은 일의 책임이 커서 마음이 무겁다는 뜻이에요.',
+      short: '맡은 일의 책임이 큼',
+      hint: '책임이 크고 무거워요',
+      example: '반장이 되니 어깨가 무거워. 친구들을 잘 이끌어야 하니까.',
+      situation: '오늘부터 우리 모둠 대표를 맡았어. 우리 모둠이 잘되도록 내가 잘 챙겨야 해.',
+      wrong: ['어깨에 무거운 가방을 멤', '어깨가 아파서 팔을 못 듦', '아무 책임도 없어 편함'],
+      wrongWords: ['머리를 맞대다', '손이 크다', '발이 넓다']
+    },
+    {
+      id: 'gw9', type: '관용구', word: '머리를 맞대다', hanja: '',
+      meaning: '여러 사람이 함께 모여 지혜를 짜낸다는 뜻이에요.',
+      short: '여럿이 모여 의논함',
+      hint: '다 같이 모여 의논해요',
+      example: '우리는 머리를 맞대고 우리 반 장기자랑을 어떻게 할지 의논했어.',
+      situation: '모둠 친구들이 모두 모여 앉아 문제를 하나씩 의논하며 답을 찾았어.',
+      wrong: ['머리와 머리를 세게 부딪힘', '혼자서만 생각함', '머리를 아프게 공부함'],
+      wrongWords: ['어깨가 무겁다', '발을 동동 구르다', '입이 무겁다']
+    },
+    {
+      id: 'gw10', type: '관용구', word: '발을 동동 구르다', hanja: '',
+      meaning: '안타깝고 답답해서 어쩔 줄 모르며 조바심을 내는 것을 말해요.',
+      short: '안타까워서 조바심 냄',
+      hint: '안타까워 발을 구르는 마음',
+      example: '버스가 늦게 와서 발을 동동 구르며 기다렸어.',
+      situation: '내가 좋아하는 팀이 마지막 골을 넣지 못해서, 앉아 있지도 못하고 안타까워만 했어.',
+      wrong: ['신나서 춤을 추는 것', '걸음을 아주 빠르게 걷는 것', '아무 생각 없이 서 있는 것'],
+      wrongWords: ['머리를 맞대다', '발이 떨어지지 않는다', '어깨가 무겁다']
+    },
+    {
+      id: 'gw11', type: '관용구', word: '간이 콩알만 해지다', hanja: '',
+      meaning: '몹시 무섭고 겁이 나서 마음이 오그라드는 것을 말해요.',
+      short: '몹시 무서워서 겁이 남',
+      hint: '무서워서 간이 쪼그라들어요',
+      example: '어두운 복도에서 갑자기 소리가 나서 간이 콩알만 해졌어.',
+      situation: '번개가 번쩍이고 천둥이 쳤어. 너무 무서워서 몸이 오그라들었어.',
+      wrong: ['간이 아파서 먹지 못함', '콩알을 많이 먹음', '아주 용감하고 씩씩함'],
+      wrongWords: ['손에 땀을 쥐다', '눈코 뜰 새 없다', '입이 무겁다']
+    },
+    {
+      id: 'gw12', type: '관용구', word: '손에 땀을 쥐다', hanja: '',
+      meaning: '아주 긴장되거나 재미있어서 손에 힘이 들어가는 것을 말해요.',
+      short: '긴장돼서 조마조마함',
+      hint: '긴장돼서 손을 꽉 쥐어요',
+      example: '경기 마지막 1초까지 점수가 비슷해서 손에 땀을 쥐고 봤어.',
+      situation: '내 친구가 줄다리기 결승에서 막 당기는데, 너무 긴장돼서 숨도 못 쉬었어.',
+      wrong: ['손에 물을 묻히는 것', '더워서 땀이 나는 것', '지루해서 하품하는 것'],
+      wrongWords: ['발을 동동 구르다', '간이 콩알만 해지다', '눈이 높다']
+    },
+    {
+      id: 'gw13', type: '관용구', word: '입이 무겁다', hanja: '',
+      meaning: '비밀이나 남의 이야기를 함부로 옮기지 않고 조용히 지킨다는 뜻이에요.',
+      short: '비밀을 잘 지킴',
+      hint: '비밀을 꼭 지켜요',
+      example: '내 짝꿍은 입이 무거워서 내가 한 이야기를 아무에게도 하지 않아.',
+      situation: '내가 비밀을 이야기했는데도 그 친구는 아무에게도 말하지 않았어. 정말 믿을 만해.',
+      wrong: ['입이 아주 큼', '말이 너무 빠름', '말을 아주 많이 함'],
+      wrongWords: ['귀가 얇다', '발 없는 말이 천 리 간다', '머리를 맞대다']
+    },
+    {
+      id: 'gw14', type: '관용구', word: '발등에 불이 떨어졌다', hanja: '',
+      meaning: '아주 급한 일이 갑자기 생겼다는 뜻이에요.',
+      short: '아주 급한 일이 생김',
+      hint: '갑자기 아주 급해졌어요',
+      example: '내일이 발표인데 오늘 준비물을 못 샀다는 걸 알았어. 발등에 불이 떨어졌어.',
+      situation: '내일 아침까지 준비물을 가져가야 하는데 저녁에야 알았어. 정말 갑자기 급해졌어.',
+      wrong: ['발에 화상을 입음', '아주 느긋하고 여유로움', '불을 끄러 가는 길'],
+      wrongWords: ['귀에 못이 박히도록 듣다', '입이 무겁다', '발이 넓다']
+    },
+    {
+      id: 'gw15', type: '관용구', word: '귀에 못이 박히도록 듣다', hanja: '',
+      meaning: '같은 이야기를 여러 번 들어서 아주 지겹도록 들었다는 뜻이에요.',
+      short: '같은 말을 아주 많이 들음',
+      hint: '같은 말을 몇백 번 들었어요',
+      example: '양치하라는 말을 귀에 못이 박히도록 들었지만 오늘도 안 씻고 잤어.',
+      situation: '엄마가 ‘정리하자’ 하는 말을 몇백 번은 들은 것 같아. 이제는 듣기만 해도 알겠어.',
+      wrong: ['귀에 못을 박는 아픈 일', '소리가 잘 안 들림', '처음 듣는 이야기'],
+      wrongWords: ['낮말은 새가 듣고 밤말은 쥐가 듣는다', '입이 무겁다', '귀가 얇다']
+    }
+  ];
+
+  /* ── 작은 도구들 ── */
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  /* ── 진행 상황 저장 ── */
+  var STORE_KEY = 'idiomsPlayground.progress.v1';
+  var progress = { stars: 0, streak: 0, bestStreak: 0, quizBest: 0, memClears: 0, blankBest: 0, blankClears: 0, trainClears: 0, oxBest: 0, lineClears: 0 };
+
+  (function loadProgress() {
+    try {
+      var raw = window.localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (saved && typeof saved === 'object') {
+        if (typeof saved.stars === 'number') progress.stars = saved.stars;
+        if (typeof saved.streak === 'number') progress.streak = saved.streak;
+        if (typeof saved.bestStreak === 'number') progress.bestStreak = saved.bestStreak;
+        if (typeof saved.quizBest === 'number') progress.quizBest = saved.quizBest;
+        if (typeof saved.memClears === 'number') progress.memClears = saved.memClears;
+        if (typeof saved.blankBest === 'number') progress.blankBest = saved.blankBest;
+        if (typeof saved.blankClears === 'number') progress.blankClears = saved.blankClears;
+        if (typeof saved.trainClears === 'number') progress.trainClears = saved.trainClears;
+        if (typeof saved.oxBest === 'number') progress.oxBest = saved.oxBest;
+        if (typeof saved.lineClears === 'number') progress.lineClears = saved.lineClears;
+      }
+    } catch (e) { /* 저장소를 못 쓰는 환경도 그냥 동작 */ }
+  })();
+
+  function saveProgress() {
+    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(progress)); } catch (e) {}
+  }
+
+  var starEl = $('#starCount');
+  var streakEl = $('#streakCount');
+  var starBox = $('#statStar');
+  var streakBox = $('#statStreak');
+
+  function pop(node) {
+    if (!node) return;
+    node.classList.remove('bump');
+    void node.offsetWidth;
+    node.classList.add('bump');
+  }
+  function renderStats(animate) {
+    starEl.textContent = progress.stars;
+    streakEl.textContent = progress.streak;
+    if (animate === 'star') pop(starBox);
+    if (animate === 'streak') pop(streakBox);
+  }
+  function addStars(n) {
+    if (n > 0) {
+      progress.stars += n;
+      renderStats('star');
+      saveProgress();
+    }
+  }
+  function bumpStreak(ok) {
+    if (ok) {
+      progress.streak += 1;
+      if (progress.streak > progress.bestStreak) progress.bestStreak = progress.streak;
+    } else {
+      progress.streak = 0;
+    }
+    renderStats('streak');
+    saveProgress();
+  }
+
+  /* ── 토스트 ── */
+  var toastEl = $('#toast');
+  var toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    if (toastTimer) window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () { toastEl.classList.remove('show'); }, 2300);
+  }
+
+  /* ── 반짝이는 축하 효과 ── */
+  var fxLayer = $('#fxLayer');
+  var FX = ['✨', '⭐', '🌟', '💫', '🎉'];
+  function sparkleAt(x, y) {
+    for (var i = 0; i < 10; i++) {
+      var s = document.createElement('span');
+      s.className = 'spark';
+      s.textContent = FX[Math.floor(Math.random() * FX.length)];
+      var ang = (Math.PI * 2 * i) / 10 + Math.random() * 0.6;
+      var dist = 46 + Math.random() * 58;
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
+      s.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+      s.style.setProperty('--dy', Math.sin(ang) * dist + 'px');
+      s.style.setProperty('--rot', (Math.random() * 240 - 120) + 'deg');
+      s.style.fontSize = (14 + Math.random() * 12) + 'px';
+      fxLayer.appendChild(s);
+      (function (node) {
+        window.setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 900);
+      })(s);
+    }
+  }
+  function sparkleAtEl(el) {
+    if (!el) { sparkleAt(window.innerWidth / 2, window.innerHeight / 2); return; }
+    var r = el.getBoundingClientRect();
+    sparkleAt(r.left + r.width / 2, r.top + Math.min(r.height / 2, 40));
+  }
+  function confettiBurst(count) {
+    var n = count || 26;
+    for (var i = 0; i < n; i++) {
+      var c = document.createElement('span');
+      c.className = 'confetti';
+      c.textContent = ['✨', '🎉', '⭐', '🌈', '🎈', '💛'][Math.floor(Math.random() * 6)];
+      c.style.left = (Math.random() * 100) + '%';
+      c.style.animationDuration = (2 + Math.random() * 1.2) + 's';
+      c.style.animationDelay = (Math.random() * 0.4) + 's';
+      c.style.fontSize = (14 + Math.random() * 12) + 'px';
+      fxLayer.appendChild(c);
+      (function (node, delay) {
+        window.setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, delay);
+      })(c, 3800);
+    }
+  }
+
+  /* ── 읽어주기 (Web Speech API) ── */
+  var speechOK = (typeof window.speechSynthesis !== 'undefined') && (typeof window.SpeechSynthesisUtterance !== 'undefined');
+  function speak(text, btn) {
+    if (!speechOK) {
+      toast('이 브라우저에서는 읽어주기를 쓸 수 없어요. 글자로 소리 내어 읽어 보세요!');
+      return;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      var u = new window.SpeechSynthesisUtterance(text);
+      u.lang = 'ko-KR';
+      u.rate = 0.92;
+      u.pitch = 1.08;
+      var voices = window.speechSynthesis.getVoices() || [];
+      for (var i = 0; i < voices.length; i++) {
+        var lang = (voices[i].lang || '').toLowerCase();
+        if (lang.indexOf('ko') === 0) { u.voice = voices[i]; break; }
+      }
+      if (btn) {
+        btn.classList.add('speaking');
+        u.onend = function () { btn.classList.remove('speaking'); };
+        u.onerror = function () { btn.classList.remove('speaking'); };
+      }
+      window.speechSynthesis.speak(u);
+    } catch (err) {
+      if (btn) btn.classList.remove('speaking');
+      toast('읽어주기를 시작하지 못했어요. 글자로 읽어 보세요!');
+    }
+  }
+
+  /* ════════════════════════
+     ① 카드 배움터
+     ════════════════════════ */
+  var learnList = $('#learnList');
+  var learnCount = $('#learnCount');
+  var learnChips = $$('#learnChips .chip');
+  var learnFilter = '전체';
+
+  function buildLearnCards() {
+    var html = '';
+    for (var i = 0; i < DATA.length; i++) {
+      var d = DATA[i];
+      html += '<article class="learn-card" data-type="' + d.type + '" data-id="' + d.id + '">' +
+        '<div class="lc-head">' +
+          '<span class="badge">' + d.type + '</span>' +
+          '<button class="speak-btn" type="button" data-speak="' + d.id + '" aria-label="' + d.word + ' 읽어주기">🔊 읽어주기</button>' +
+        '</div>' +
+        '<div class="lc-title">' +
+          '<h3 class="word">' + d.word + '</h3>' +
+          (d.hanja ? '<span class="hanja">' + d.hanja + '</span>' : '') +
+        '</div>' +
+        '<p class="lc-row"><span class="tag">뜻</span><span>' + d.meaning + '</span></p>' +
+        '<p class="lc-row example"><span class="tag">예</span><span>' + d.example + '</span></p>' +
+      '</article>';
+    }
+    learnList.innerHTML = html;
+  }
+
+  function applyLearnFilter() {
+    var cards = $$('.learn-card', learnList);
+    var shown = 0;
+    for (var i = 0; i < cards.length; i++) {
+      var ok = (learnFilter === '전체') || cards[i].getAttribute('data-type') === learnFilter;
+      cards[i].classList.toggle('hidden', !ok);
+      if (ok) shown++;
+    }
+    learnCount.innerHTML = '<b>' + shown + '개</b>의 표현을 보고 있어요';
+  }
+
+  learnChips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      learnFilter = chip.getAttribute('data-filter');
+      learnChips.forEach(function (c) {
+        var on = c === chip;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      applyLearnFilter();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  learnList.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.speak-btn') : null;
+    if (!btn) return;
+    var id = btn.getAttribute('data-speak');
+    var item = null;
+    for (var i = 0; i < DATA.length; i++) { if (DATA[i].id === id) { item = DATA[i]; break; } }
+    if (!item) return;
+    speak(item.word + '. ' + item.meaning + ' 예를 들어, ' + item.example, btn);
+  });
+
+  /* ════════════════════════
+     ② 재미있는 퀴즈
+     ════════════════════════ */
+  var quizIntro = $('#quizIntro');
+  var quizPlay = $('#quizPlay');
+  var quizResult = $('#quizResult');
+  var quizCats = $$('#quizCats .chip');
+  var quizCategory = '전체';
+  var quiz = { questions: [], index: 0, score: 0, earned: 0, answered: false, active: false };
+
+  $('#quizStartBtn').addEventListener('click', function () { startQuiz(quizCategory); });
+
+  quizCats.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      quizCategory = chip.getAttribute('data-cat');
+      quizCats.forEach(function (c) {
+        var on = c === chip;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    });
+  });
+
+  function buildQuestions(category) {
+    var pool = category === '전체' ? DATA.slice() : DATA.filter(function (d) { return d.type === category; });
+    var bag = shuffle(pool.slice());
+    var picks = [];
+    for (var i = 0; picks.length < 10; i++) { picks.push(bag[i % bag.length]); }
+
+    return picks.map(function (item, idx) {
+      var kind = (idx % 2 === 0) ? 'meaning' : 'situation';
+      var texts, right;
+      if (kind === 'meaning') {
+        right = item.short;
+        texts = shuffle([item.short].concat(item.wrong));
+      } else {
+        right = item.word;
+        texts = shuffle([item.word].concat(item.wrongWords));
+      }
+      var choices = texts.map(function (t) {
+        return { text: t, correct: t === right };
+      });
+      return {
+        kind: kind,
+        item: item,
+        choices: choices,
+        prompt: kind === 'meaning' ? item.word : item.situation,
+        sub: kind === 'meaning' ? (item.hanja || item.type) : '',
+        label: kind === 'meaning' ? '이 말의 뜻은 무엇일까요?' : '이런 상황에는 어떤 말을 쓸까요?',
+        hint: item.hint
+      };
+    });
+  }
+
+  function showQuizPhase(phase) {
+    quizIntro.classList.toggle('hidden', phase !== 'intro');
+    quizPlay.classList.toggle('hidden', phase !== 'play');
+    quizResult.classList.toggle('hidden', phase !== 'result');
+  }
+
+  function clearFx() {
+    while (fxLayer.firstChild) fxLayer.removeChild(fxLayer.firstChild);
+  }
+
+  function startQuiz(category) {
+    clearFx();
+    quiz.questions = buildQuestions(category);
+    quiz.index = 0;
+    quiz.score = 0;
+    quiz.earned = 0;
+    quiz.answered = false;
+    quiz.active = true;
+    showQuizPhase('play');
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  var qKind = $('#qKind');
+  var qLabel = $('#qLabel');
+  var qText = $('#qText');
+  var qSub = $('#qSub');
+  var choicesBox = $('#choices');
+  var feedbackBox = $('#feedback');
+  var nextWrap = $('#nextWrap');
+  var nextBtn = $('#nextBtn');
+  var hintBtn = $('#hintBtn');
+  var hintBox = $('#hintBox');
+  var quizBar = $('#quizBar');
+  var quizCounter = $('#quizCounter');
+
+  function renderQuestion() {
+    var q = quiz.questions[quiz.index];
+    quiz.answered = false;
+
+    quizCounter.textContent = (quiz.index + 1) + ' / ' + quiz.questions.length;
+    quizBar.style.width = (quiz.index / quiz.questions.length * 100) + '%';
+
+    qKind.textContent = q.kind === 'meaning' ? '뜻 고르기' : '말 고르기';
+    qKind.className = 'q-kind ' + (q.kind === 'meaning' ? 'kind-meaning' : 'kind-word');
+    qLabel.textContent = q.label;
+    qText.textContent = q.prompt;
+    qText.className = 'q-text' + (q.kind === 'situation' ? ' situation' : '');
+    qSub.textContent = q.sub;
+    qSub.classList.toggle('hidden', !q.sub);
+
+    hintBox.classList.add('hidden');
+    hintBox.textContent = '';
+    hintBtn.classList.remove('hidden');
+    hintBtn.disabled = false;
+    hintBtn.textContent = '💡 힌트 보기';
+
+    feedbackBox.classList.add('hidden');
+    feedbackBox.innerHTML = '';
+    nextWrap.classList.add('hidden');
+    nextBtn.textContent = '다음 문제 →';
+
+    var html = '';
+    for (var i = 0; i < q.choices.length; i++) {
+      html += '<button class="choice" type="button" data-idx="' + i + '">' +
+        '<span class="num">' + (i + 1) + '</span>' +
+        '<span class="txt">' + q.choices[i].text + '</span>' +
+      '</button>';
+    }
+    choicesBox.innerHTML = html;
+  }
+
+  hintBtn.addEventListener('click', function () {
+    var q = quiz.questions[quiz.index];
+    hintBox.textContent = '💡 힌트: ' + q.hint;
+    hintBox.classList.remove('hidden');
+    hintBtn.textContent = '힌트를 봤어요';
+    hintBtn.disabled = true;
+  });
+
+  choicesBox.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.choice') : null;
+    if (!btn || btn.disabled) return;
+    answerQuiz(parseInt(btn.getAttribute('data-idx'), 10), btn);
+  });
+
+  function answerQuiz(idx, btn) {
+    if (quiz.answered) return;
+    quiz.answered = true;
+    var q = quiz.questions[quiz.index];
+    var picked = q.choices[idx];
+    var buttons = $$('.choice', choicesBox);
+
+    buttons.forEach(function (b) {
+      b.disabled = true;
+      var i = parseInt(b.getAttribute('data-idx'), 10);
+      if (q.choices[i].correct) b.classList.add('correct');
+    });
+
+    quizBar.style.width = ((quiz.index + 1) / quiz.questions.length * 100) + '%';
+
+    if (picked.correct) {
+      quiz.score += 1;
+      quiz.earned += 1;
+      addStars(1);
+      bumpStreak(true);
+      sparkleAtEl(btn);
+      feedbackBox.className = 'feedback good';
+      feedbackBox.innerHTML = '<b>정답이에요! ⭐ 별 하나 받았어요</b>' +
+        '<p>' + q.item.word + ' — ' + q.item.short + (progress.streak >= 3 ? ' · <span class="got">🔥 ' + progress.streak + '연속 정답!</span>' : '') + '</p>';
+    } else {
+      if (!picked.correct) btn.classList.add('wrong');
+      bumpStreak(false);
+      buttons.forEach(function (b) {
+        if (b.classList.contains('correct')) return;
+        b.classList.add('dim');
+      });
+      var rightText = '';
+      for (var i = 0; i < q.choices.length; i++) { if (q.choices[i].correct) rightText = q.choices[i].text; }
+      feedbackBox.className = 'feedback bad';
+      feedbackBox.innerHTML = '<b>아쉬워요! 정답은 ‘' + rightText + '’</b>' +
+        '<p>' + (q.kind === 'meaning'
+          ? q.item.word + ' · 예: ' + q.item.example
+          : q.item.word + ' — ' + q.item.short) + '</p>';
+    }
+
+    feedbackBox.classList.remove('hidden');
+    hintBtn.classList.add('hidden');
+    nextWrap.classList.remove('hidden');
+    nextBtn.textContent = (quiz.index + 1 >= quiz.questions.length) ? '결과 보기 🎉' : '다음 문제 →';
+    try {
+      window.requestAnimationFrame(function () {
+        var r = nextBtn.getBoundingClientRect();
+        var limit = window.innerHeight - 122;
+        var delta = Math.ceil(r.bottom - limit);
+        if (delta > 0) window.scrollBy(0, delta);
+      });
+    } catch (e) {}
+  }
+
+  nextBtn.addEventListener('click', function () {
+    if (quiz.index + 1 >= quiz.questions.length) {
+      renderQuizResult();
+    } else {
+      quiz.index += 1;
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+
+  function renderQuizResult() {
+    quiz.active = false;
+    var total = quiz.questions.length;
+    if (quiz.score > progress.quizBest) progress.quizBest = quiz.score;
+    saveProgress();
+    showQuizPhase('result');
+
+    var pct = Math.round(quiz.score / total * 100);
+    $('#scoreRing').style.setProperty('--p', pct + '%');
+    $('#scoreBig').textContent = quiz.score + '/' + total;
+    $('#resultStars').textContent = '⭐ 별 ' + quiz.earned + '개';
+    $('#resultStreak').textContent = '🔥 최고 ' + progress.bestStreak + '연속';
+
+    var title, desc;
+    if (quiz.score === total) {
+      title = '완벽해요! 말 박사님! 🏆';
+      desc = '열 문제를 모두 맞혔어요. 정말 대단해요!';
+    } else if (quiz.score >= 7) {
+      title = '아주 잘했어요! 🎉';
+      desc = '조금만 더 하면 만점이에요. 한 번 더 도전해 볼까요?';
+    } else if (quiz.score >= 4) {
+      title = '좋아요! 점점 늘고 있어요 🌱';
+      desc = '틀린 문제의 카드를 배움터에서 다시 읽어 보면 더 잘 알게 될 거예요.';
+    } else {
+      title = '괜찮아요, 다시 해 봐요 💪';
+      desc = '카드 배움터에서 뜻을 먼저 읽고 오면 훨씬 쉬워져요.';
+    }
+    $('#resultTitle').textContent = title;
+    $('#resultDesc').textContent = desc;
+    $('#quizBestLine').textContent = '';
+
+    if (quiz.score >= 7) confettiBurst(22);
+    else if (quiz.score > 0) sparkleAt(window.innerWidth / 2, window.innerHeight * 0.35);
+  }
+
+  $('#retryBtn').addEventListener('click', function () { startQuiz(quizCategory); });
+  $('#toLearnBtn').addEventListener('click', function () {
+    showQuizPhase('intro');
+    quiz.active = false;
+    switchTab('learn');
+  });
+
+  function refreshQuizIntro() {
+    var line = progress.quizBest > 0
+      ? '지금까지 가장 많이 맞힌 문제는 ' + progress.quizBest + '문제예요'
+      : '아직 기록이 없어요. 첫 도전을 기다릴게요!';
+    $('#quizBestLine').innerHTML = line + ' · 모은 별 <b>' + progress.stars + '개</b>';
+  }
+
+  /* ════════════════════════
+     ③ 짝꿍 카드 뒤집기
+     ════════════════════════ */
+  var matchIntro = $('#matchIntro');
+  var matchPlay = $('#matchPlay');
+  var matchDone = $('#matchDone');
+  var levelBtns = $$('#levelRow .level-btn');
+  var memBoard = $('#memBoard');
+  var memInfo = $('#memInfo');
+  var mem = { level: 6, cards: [], first: null, second: null, lock: false, matched: 0, pairs: 0, moves: 0, active: false };
+
+  levelBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      mem.level = parseInt(b.getAttribute('data-level'), 10);
+      levelBtns.forEach(function (x) { x.classList.toggle('on', x === b); });
+    });
+  });
+
+  $('#matchStartBtn').addEventListener('click', function () { startMemory(mem.level); });
+  $('#memRestart').addEventListener('click', function () { startMemory(mem.level); });
+  $('#memAgainBtn').addEventListener('click', function () { startMemory(mem.level); });
+  $('#memLevelBtn').addEventListener('click', function () {
+    matchDone.classList.add('hidden');
+    matchIntro.classList.remove('hidden');
+    mem.active = false;
+  });
+
+  function showMatchPhase(phase) {
+    matchIntro.classList.toggle('hidden', phase !== 'intro');
+    matchPlay.classList.toggle('hidden', phase !== 'play');
+    matchDone.classList.toggle('hidden', phase !== 'done');
+  }
+
+  function startMemory(level) {
+    clearFx();
+    mem.level = level;
+    mem.pairs = Math.floor(level / 2);
+    var pool = shuffle(DATA.slice()).slice(0, mem.pairs);
+    var cards = [];
+    pool.forEach(function (item, i) {
+      cards.push({ pid: i, side: 'word', item: item });
+      cards.push({ pid: i, side: 'short', item: item });
+    });
+    shuffle(cards);
+
+    mem.cards = cards;
+    mem.first = null;
+    mem.second = null;
+    mem.lock = false;
+    mem.matched = 0;
+    mem.moves = 0;
+    mem.active = true;
+
+    showMatchPhase('play');
+    memBoard.className = 'mem-board' + (level === 12 ? ' cols-3' : '');
+    var html = '';
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      var text = c.side === 'word' ? c.item.word : c.item.short;
+      var tag = c.side === 'word' ? '말' : '뜻';
+      html += '<button class="mem-card" type="button" data-idx="' + i + '" data-side="' + c.side + '" aria-label="카드 ' + (i + 1) + '">' +
+        '<span class="mem-inner">' +
+          '<span class="mem-face mem-back">?<span>뒤집기</span></span>' +
+          '<span class="mem-face mem-front"><span class="mem-tag">' + tag + '</span><span>' + text + '</span></span>' +
+        '</span>' +
+      '</button>';
+    }
+    memBoard.innerHTML = html;
+    updateMemInfo();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateMemInfo() {
+    memInfo.innerHTML = '짝 <b>' + mem.matched + '</b> / ' + mem.pairs + ' · 뒤집기 ' + mem.moves + '번';
+  }
+
+  memBoard.addEventListener('click', function (e) {
+    var card = e.target.closest ? e.target.closest('.mem-card') : null;
+    if (!card || !mem.active) return;
+    if (mem.lock || card.classList.contains('matched') || card.classList.contains('flipped')) return;
+
+    card.classList.add('flipped');
+    var idx = parseInt(card.getAttribute('data-idx'), 10);
+
+    if (mem.first === null) {
+      mem.first = { idx: idx, el: card };
+      mem.moves += 1;
+      updateMemInfo();
+      return;
+    }
+    mem.second = { idx: idx, el: card };
+
+    var a = mem.cards[mem.first.idx];
+    var b = mem.cards[mem.second.idx];
+
+    if (a.pid === b.pid && a.side !== b.side) {
+      mem.first.el.classList.add('matched');
+      mem.second.el.classList.add('matched');
+      mem.matched += 1;
+      addStars(1);
+      sparkleAtEl(card);
+      mem.first = null;
+      mem.second = null;
+      updateMemInfo();
+      if (mem.matched === mem.pairs) {
+        window.setTimeout(finishMemory, 620);
+      }
+    } else {
+      mem.lock = true;
+      mem.first.el.classList.add('wrongShake');
+      mem.second.el.classList.add('wrongShake');
+      var f = mem.first, s = mem.second;
+      window.setTimeout(function () {
+        f.el.classList.remove('flipped', 'wrongShake');
+        s.el.classList.remove('flipped', 'wrongShake');
+        mem.first = null;
+        mem.second = null;
+        mem.lock = false;
+      }, 780);
+    }
+  });
+
+  function finishMemory() {
+    mem.active = false;
+    showMatchPhase('done');
+    progress.memClears += 1;
+    saveProgress();
+    $('#doneDesc').textContent = '뒤집기 ' + mem.moves + '번 만에 ' + mem.pairs + '쌍을 모두 찾았어요!';
+    var starRow = '';
+    for (var i = 0; i < mem.pairs; i++) starRow += '⭐';
+    $('#doneStars').textContent = starRow;
+    confettiBurst(18);
+  }
+
+  function refreshMatchIntro() {
+    $('#matchBestLine').innerHTML = '지금까지 짝꿍 카드를 <b>' + progress.memClears + '번</b> 완성했어요';
+    var mc = $('#matchClears');
+    if (mc) mc.textContent = progress.memClears ? '완성 ' + progress.memClears + '번' : '';
+  }
+
+  /* ════════════════════════
+     ④ 게임 놀이터 · 허브
+     ════════════════════════ */
+  var gameHub = $('#gameHub');
+  var GAME_VIEW_IDS = ['gameHub', 'matchIntro', 'matchPlay', 'matchDone',
+    'blankIntro', 'blankPlay', 'blankDone',
+    'trainIntro', 'trainPlay', 'trainDone',
+    'oxIntro', 'oxPlay', 'oxDone',
+    'lineIntro', 'linePlay', 'lineDone'];
+  var currentGame = null;
+
+  function hideGameViews() {
+    for (var i = 0; i < GAME_VIEW_IDS.length; i++) {
+      var el = document.getElementById(GAME_VIEW_IDS[i]);
+      if (el) el.classList.add('hidden');
+    }
+  }
+
+  function openGame(name) {
+    currentGame = name;
+    clearFx();
+    hideGameViews();
+    if (name === 'match') {
+      mem.active = false;
+      showMatchPhase('intro');
+      refreshMatchIntro();
+    } else if (name === 'blank') {
+      blank.active = false;
+      showBlankPhase('intro');
+      refreshBlankIntro();
+    } else if (name === 'train') {
+      train.active = false;
+      showTrainPhase('intro');
+      refreshTrainIntro();
+    } else if (name === 'ox') {
+      ox.active = false;
+      showOxPhase('intro');
+      refreshOxIntro();
+    } else if (name === 'line') {
+      line.active = false;
+      showLinePhase('intro');
+      refreshLineIntro();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goHub() {
+    mem.active = false;
+    blank.active = false;
+    train.active = false;
+    ox.active = false;
+    line.active = false;
+    currentGame = null;
+    clearFx();
+    hideGameViews();
+    gameHub.classList.remove('hidden');
+    refreshHub();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function refreshHub() {
+    var bits = [];
+    if (progress.memClears) bits.push('짝꿍 카드 ' + progress.memClears + '번');
+    if (progress.blankClears) bits.push('빈칸 ' + progress.blankClears + '판');
+    if (progress.trainClears) bits.push('기차 ' + progress.trainClears + '판');
+    if (progress.oxBest) bits.push('OX ' + progress.oxBest + '문제');
+    if (progress.lineClears) bits.push('선 잇기 ' + progress.lineClears + '판');
+    var text = '모은 별 <b>' + progress.stars + '개</b>';
+    if (bits.length) text += ' · ' + bits.join(' · ');
+    var hubLine = $('#hubLine');
+    if (hubLine) hubLine.innerHTML = text;
+  }
+
+  $$('.hub-card', gameHub).forEach(function (card) {
+    card.addEventListener('click', function () { openGame(card.getAttribute('data-game')); });
+  });
+  $$('[data-back]').forEach(function (btn) {
+    btn.addEventListener('click', goHub);
+  });
+
+  /* ── 말 조각(글자·어절) 나누기 ── */
+  var TOKEN_OVERRIDE = {
+    sd5: ['천 리', '길도', '한 걸음부터'],
+    sd10: ['발', '없는', '말이', '천 리', '간다'],
+    sd11: ['세 살', '버릇', '여든까지', '간다'],
+    sd12: ['열 번', '찍어', '안', '넘어가는', '나무', '없다'],
+    sd15: ['말', '한마디에', '천 냥', '빚', '갚는다']
+  };
+  function tokensOf(item) {
+    if (TOKEN_OVERRIDE[item.id]) return TOKEN_OVERRIDE[item.id].slice();
+    if (item.type === '사자성어' && item.word.length === 4) return item.word.split('');
+    return item.word.split(' ');
+  }
+
+  /* ════════════════════════
+     ⑤ 빈칸 톡톡 채우기
+     ════════════════════════ */
+  var BLANK_INDEX = {
+    sj1: 2, sj2: 3, sj3: 1, sj4: 2, sj5: 2, sj6: 2, sj7: 2, sj8: 3, sj9: 2, sj10: 0,
+    sj11: 2, sj12: 2, sj13: 2, sj14: 2, sj15: 2,
+    sd1: 2, sd2: 3, sd3: 1, sd4: 1, sd5: 2, sd6: 2, sd7: 2, sd8: 1, sd9: 2, sd10: 3,
+    sd11: 2, sd12: 4, sd13: 1, sd14: 1, sd15: 2,
+    gw1: 1, gw2: 1, gw3: 1, gw4: 2, gw5: 1, gw6: 1, gw7: 1, gw8: 1, gw9: 1, gw10: 1,
+    gw11: 1, gw12: 1, gw13: 1, gw14: 1, gw15: 1
+  };
+  var BLANK_EXTRA = { sj3: ['불여일견', '일견불여', '백문일견', '불여일청'] };
+  var BLANK_POOL = {};
+  DATA.forEach(function (it) {
+    var ans = tokensOf(it)[BLANK_INDEX[it.id]];
+    if (!BLANK_POOL[it.type]) BLANK_POOL[it.type] = [];
+    if (ans) BLANK_POOL[it.type].push(ans);
+  });
+
+  function buildBlankPuzzle(item) {
+    var toks = tokensOf(item);
+    var bi = BLANK_INDEX[item.id];
+    var answer = toks[bi];
+    var opts = [];
+    if (BLANK_EXTRA[item.id]) {
+      opts = BLANK_EXTRA[item.id].slice();
+    } else {
+      opts.push(answer);
+      var pool = BLANK_POOL[item.type] || [];
+      var near = [];
+      var far = [];
+      for (var i = 0; i < pool.length; i++) {
+        var w = pool[i];
+        if (!w || w === answer || opts.indexOf(w) !== -1 || near.indexOf(w) !== -1 || far.indexOf(w) !== -1) continue;
+        if (Math.abs(w.length - answer.length) <= 1) near.push(w);
+        else far.push(w);
+      }
+      var cand = shuffle(near);
+      if (cand.length < 3) cand = cand.concat(shuffle(far));
+      opts = opts.concat(cand.slice(0, 3));
+    }
+    return { item: item, tokens: toks, blankIndex: bi, answer: answer, options: shuffle(opts) };
+  }
+
+  var blankIntro = $('#blankIntro');
+  var blankPlay = $('#blankPlay');
+  var blankDone = $('#blankDone');
+  var blank = { items: [], index: 0, stars: 0, active: false, answered: false, tried: false, puzzle: null };
+
+  function showBlankPhase(phase) {
+    blankIntro.classList.toggle('hidden', phase !== 'intro');
+    blankPlay.classList.toggle('hidden', phase !== 'play');
+    blankDone.classList.toggle('hidden', phase !== 'done');
+  }
+
+  function startBlank() {
+    clearFx();
+    blank.items = shuffle(DATA.slice()).slice(0, 8);
+    blank.index = 0;
+    blank.stars = 0;
+    blank.active = true;
+    blank.answered = false;
+    blank.tried = false;
+    blank.puzzle = null;
+    showBlankPhase('play');
+    renderBlank();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderBlank() {
+    var item = blank.items[blank.index];
+    var p = buildBlankPuzzle(item);
+    blank.puzzle = p;
+    blank.answered = false;
+    blank.tried = false;
+
+    $('#blankStep').textContent = (blank.index + 1) + ' / ' + blank.items.length;
+    $('#blankBar').style.width = (blank.index / blank.items.length * 100) + '%';
+
+    var html = '';
+    for (var i = 0; i < p.tokens.length; i++) {
+      if (i === p.blankIndex) html += '<span class="blank-slot" id="blankSlot">?</span>';
+      else html += '<span class="blank-token">' + p.tokens[i] + '</span>';
+    }
+    $('#blankLine').innerHTML = html;
+    $('#blankHint').innerHTML = '💡 힌트: <b>' + item.type + '</b> · ' + item.short;
+
+    var tiles = '';
+    for (var j = 0; j < p.options.length; j++) {
+      tiles += '<button class="tile" type="button" data-opt="' + j + '">' + p.options[j] + '</button>';
+    }
+    $('#blankTiles').innerHTML = tiles;
+    $('#blankFeedback').classList.add('hidden');
+    $('#blankFeedback').innerHTML = '';
+    $('#blankNextWrap').classList.add('hidden');
+  }
+
+  $('#blankStartBtn').addEventListener('click', startBlank);
+  $('#blankAgainBtn').addEventListener('click', startBlank);
+
+  $('#blankTiles').addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.tile') : null;
+    if (!btn || btn.disabled || !blank.active || blank.answered) return;
+    var opt = blank.puzzle.options[parseInt(btn.getAttribute('data-opt'), 10)];
+    var item = blank.puzzle.item;
+    var slot = $('#blankSlot');
+
+    if (opt === blank.puzzle.answer) {
+      blank.answered = true;
+      btn.classList.add('good');
+      $$('.tile', $('#blankTiles')).forEach(function (b) {
+        if (b !== btn) { b.disabled = true; b.classList.add('dim'); }
+      });
+      slot.textContent = blank.puzzle.answer;
+      slot.className = 'blank-slot filled';
+      var first = !blank.tried;
+      if (first) { blank.stars += 1; addStars(1); bumpStreak(true); } else { bumpStreak(false); }
+      sparkleAtEl(btn);
+      $('#blankFeedback').className = 'feedback good';
+      $('#blankFeedback').innerHTML = '<b>정답이에요!' + (first ? ' ⭐ 별 하나 받았어요' : '') + '</b>' +
+        '<p>' + item.word + ' — ' + item.short + '</p>';
+      $('#blankFeedback').classList.remove('hidden');
+      $('#blankNextWrap').classList.remove('hidden');
+      $('#blankNextBtn').textContent = (blank.index + 1 >= blank.items.length) ? '결과 보기 🎉' : '다음 문제 →';
+      $('#blankBar').style.width = ((blank.index + 1) / blank.items.length * 100) + '%';
+      try {
+        window.requestAnimationFrame(function () {
+          var r = $('#blankNextBtn').getBoundingClientRect();
+          var d = Math.ceil(r.bottom - (window.innerHeight - 122));
+          if (d > 0) window.scrollBy(0, d);
+        });
+      } catch (err) {}
+    } else {
+      blank.tried = true;
+      btn.classList.add('bad');
+      btn.disabled = true;
+      bumpStreak(false);
+      slot.classList.add('bad');
+      window.setTimeout(function () { slot.classList.remove('bad'); }, 430);
+      $('#blankFeedback').className = 'feedback bad';
+      $('#blankFeedback').innerHTML = '<b>아쉬워요, 다시 골라 보세요</b><p>힌트: ' + item.hint + '</p>';
+      $('#blankFeedback').classList.remove('hidden');
+    }
+  });
+
+  $('#blankNextBtn').addEventListener('click', function () {
+    if (blank.index + 1 >= blank.items.length) finishBlank();
+    else { blank.index += 1; renderBlank(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+
+  function finishBlank() {
+    blank.active = false;
+    showBlankPhase('done');
+    progress.blankClears += 1;
+    if (blank.stars > progress.blankBest) progress.blankBest = blank.stars;
+    saveProgress();
+    $('#blankDoneDesc').textContent = '8문제 중 ' + blank.stars + '개를 한 번에 맞혔어요!';
+    var s = '';
+    for (var i = 0; i < blank.stars; i++) s += '⭐';
+    $('#blankDoneStars').textContent = s || '⭐';
+    confettiBurst(20);
+  }
+
+  function refreshBlankIntro() {
+    var best = progress.blankBest > 0
+      ? '지금까지 가장 많이 맞힌 건 ' + progress.blankBest + '문제예요'
+      : '아직 기록이 없어요. 첫 도전을 기다릴게요!';
+    $('#blankBestLine').innerHTML = best + ' · 모은 별 <b>' + progress.stars + '개</b>';
+  }
+
+  /* ════════════════════════
+     ⑥ 말 순서 기차
+     ════════════════════════ */
+  var trainIntro = $('#trainIntro');
+  var trainPlay = $('#trainPlay');
+  var trainDone = $('#trainDone');
+  var train = { items: [], index: 0, stars: 0, active: false, item: null, tokens: [], placed: [], pool: [], done: false };
+
+  function showTrainPhase(phase) {
+    trainIntro.classList.toggle('hidden', phase !== 'intro');
+    trainPlay.classList.toggle('hidden', phase !== 'play');
+    trainDone.classList.toggle('hidden', phase !== 'done');
+  }
+
+  function startTrain() {
+    clearFx();
+    train.items = shuffle(DATA.slice()).slice(0, 6);
+    train.index = 0;
+    train.stars = 0;
+    train.active = true;
+    showTrainPhase('play');
+    renderTrain();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderTrain() {
+    var item = train.items[train.index];
+    train.item = item;
+    train.tokens = tokensOf(item);
+    train.placed = [];
+    train.done = false;
+    $('#trainStep').textContent = item.type + ' · ' + (train.index + 1) + ' / ' + train.items.length;
+    $('#trainFeedback').classList.add('hidden');
+    $('#trainFeedback').innerHTML = '';
+    $('#trainNextWrap').classList.add('hidden');
+    var check = $('#trainCheckBtn');
+    check.disabled = false;
+    check.classList.remove('hidden');
+
+    var order = [];
+    for (var i = 0; i < train.tokens.length; i++) order.push(i);
+    train.pool = shuffle(order);
+    var poolHtml = '';
+    for (var j = 0; j < train.pool.length; j++) {
+      var ti = train.pool[j];
+      poolHtml += '<button class="train-card" type="button" data-ti="' + ti + '">' + train.tokens[ti] + '</button>';
+    }
+    $('#trainPool').innerHTML = poolHtml;
+    var track = $('#trainTrack');
+    track.classList.remove('win', 'shake');
+    renderTrainTrack();
+  }
+
+  function renderTrainTrack() {
+    var html = '<span class="train-engine" aria-hidden="true">🚂</span>';
+    for (var i = 0; i < train.placed.length; i++) {
+      html += '<button class="train-chip" type="button" data-pos="' + i + '">' + train.placed[i].text + '</button>';
+    }
+    var left = train.tokens.length - train.placed.length;
+    for (var j = 0; j < left; j++) html += '<span class="train-chip empty" aria-hidden="true">?</span>';
+    $('#trainTrack').innerHTML = html;
+    var used = train.placed.map(function (p) { return p.ti; });
+    $$('.train-card', $('#trainPool')).forEach(function (card) {
+      card.classList.toggle('used', used.indexOf(parseInt(card.getAttribute('data-ti'), 10)) !== -1);
+    });
+  }
+
+  $('#trainStartBtn').addEventListener('click', startTrain);
+  $('#trainAgainBtn').addEventListener('click', startTrain);
+
+  $('#trainPool').addEventListener('click', function (e) {
+    var card = e.target.closest ? e.target.closest('.train-card') : null;
+    if (!card || !train.active || train.done) return;
+    if (card.classList.contains('used')) return;
+    var ti = parseInt(card.getAttribute('data-ti'), 10);
+    train.placed.push({ ti: ti, text: train.tokens[ti] });
+    renderTrainTrack();
+  });
+
+  $('#trainTrack').addEventListener('click', function (e) {
+    var chip = e.target.closest ? e.target.closest('.train-chip') : null;
+    if (!chip || chip.classList.contains('empty') || !train.active || train.done) return;
+    var pos = parseInt(chip.getAttribute('data-pos'), 10);
+    if (isNaN(pos)) return;
+    train.placed.splice(pos, 1);
+    renderTrainTrack();
+  });
+
+  $('#trainCheckBtn').addEventListener('click', function () {
+    if (!train.active || train.done) return;
+    if (train.placed.length < train.tokens.length) {
+      toast('카드를 모두 놓은 뒤에 기차를 출발해요!');
+      return;
+    }
+    var made = train.placed.map(function (p) { return p.text; }).join(' ');
+    var goal = train.tokens.join(' ');
+    if (made === goal) {
+      train.done = true;
+      train.stars += 1;
+      addStars(1);
+      bumpStreak(true);
+      $('#trainTrack').classList.add('win');
+      sparkleAtEl($('#trainTrack'));
+      $('#trainFeedback').className = 'feedback good';
+      $('#trainFeedback').innerHTML = '<b>기차 완성! ⭐ 별 하나 받았어요</b>' +
+        '<p>' + train.item.word + ' — ' + train.item.short + '</p>' +
+        '<p>예: ' + train.item.example + '</p>';
+      $('#trainFeedback').classList.remove('hidden');
+      $('#trainCheckBtn').disabled = true;
+      $('#trainNextWrap').classList.remove('hidden');
+      $('#trainNextBtn').textContent = (train.index + 1 >= train.items.length) ? '결과 보기 🎉' : '다음 문제 →';
+      if (train.index + 1 >= train.items.length) confettiBurst(24);
+      try {
+        window.requestAnimationFrame(function () {
+          var r = $('#trainNextBtn').getBoundingClientRect();
+          var d = Math.ceil(r.bottom - (window.innerHeight - 122));
+          if (d > 0) window.scrollBy(0, d);
+        });
+      } catch (err) {}
+    } else {
+      bumpStreak(false);
+      var track = $('#trainTrack');
+      track.classList.remove('shake');
+      void track.offsetWidth;
+      track.classList.add('shake');
+      $('#trainFeedback').className = 'feedback bad';
+      $('#trainFeedback').innerHTML = '<b>순서가 조금 달라요</b><p>놓은 카드를 눌러 빼고, 다시 순서를 맞춰 보세요.</p>';
+      $('#trainFeedback').classList.remove('hidden');
+    }
+  });
+
+  $('#trainNextBtn').addEventListener('click', function () {
+    if (train.index + 1 >= train.items.length) finishTrain();
+    else { train.index += 1; renderTrain(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+
+  function finishTrain() {
+    train.active = false;
+    showTrainPhase('done');
+    progress.trainClears += 1;
+    saveProgress();
+    $('#trainDoneDesc').textContent = '6문제 중 ' + train.stars + '개를 완성했어요!';
+    var s = '';
+    for (var i = 0; i < train.stars; i++) s += '⭐';
+    $('#trainDoneStars').textContent = s || '⭐';
+    confettiBurst(20);
+  }
+
+  function refreshTrainIntro() {
+    $('#trainBestLine').innerHTML = '지금까지 기차를 <b>' + progress.trainClears + '판</b> 완성했어요 · 모은 별 <b>' + progress.stars + '개</b>';
+  }
+
+  /* ════════════════════════
+     ⑦ OX 스피드 퀴즈
+     ════════════════════════ */
+  var oxIntro = $('#oxIntro');
+  var oxPlay = $('#oxPlay');
+  var oxDone = $('#oxDone');
+  var ox = { questions: [], index: 0, correct: 0, combo: 0, bestCombo: 0, stars: 0, active: false, answered: false, askedAt: 0 };
+
+  function showOxPhase(phase) {
+    oxIntro.classList.toggle('hidden', phase !== 'intro');
+    oxPlay.classList.toggle('hidden', phase !== 'play');
+    oxDone.classList.toggle('hidden', phase !== 'done');
+  }
+
+  function buildOxQuestions() {
+    var pool = shuffle(DATA.slice()).slice(0, 8);
+    var flags = shuffle([true, true, true, true, false, false, false, false]);
+    return pool.map(function (item, i) {
+      var isMatch = flags[i];
+      var shown = item;
+      if (!isMatch || Math.random() < 0.5) {
+        var others = DATA.filter(function (d) { return d.id !== item.id && d.type === item.type && d.short !== item.short; });
+        if (!others.length) others = DATA.filter(function (d) { return d.id !== item.id && d.short !== item.short; });
+        if (others.length) shown = others[Math.floor(Math.random() * others.length)];
+      }
+      return { item: item, meaning: shown.short, isMatch: shown.short === item.short };
+    });
+  }
+
+  function startOx() {
+    clearFx();
+    ox.questions = buildOxQuestions();
+    ox.index = 0;
+    ox.correct = 0;
+    ox.combo = 0;
+    ox.bestCombo = 0;
+    ox.stars = 0;
+    ox.active = true;
+    showOxPhase('play');
+    renderOx();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderOx() {
+    var q = ox.questions[ox.index];
+    ox.answered = false;
+    ox.askedAt = Date.now();
+    $('#oxCounter').textContent = (ox.index + 1) + ' / ' + ox.questions.length;
+    $('#oxBar').style.width = (ox.index / ox.questions.length * 100) + '%';
+    $('#oxWord').textContent = q.item.word;
+    $('#oxMeaning').textContent = q.meaning;
+    $('#oxKind').textContent = q.item.type + ' · 짝 확인';
+    $('#oxKind').className = 'q-kind ' + (q.item.type === '사자성어' ? 'kind-meaning' : 'kind-word');
+    $('#oxCombo').textContent = '🔥 콤보 ' + ox.combo;
+    $('#oxCombo').classList.toggle('hot', ox.combo >= 3);
+    $('#oxBtnO').disabled = false;
+    $('#oxBtnX').disabled = false;
+    $('#oxFeedback').classList.add('hidden');
+    $('#oxFeedback').innerHTML = '';
+    $('#oxNextWrap').classList.add('hidden');
+  }
+
+  function answerOx(choice) {
+    if (!ox.active || ox.answered) return;
+    var q = ox.questions[ox.index];
+    var right = q.isMatch ? 'O' : 'X';
+    var ok = choice === right;
+    var secs = (Date.now() - ox.askedAt) / 1000;
+    ox.answered = true;
+    $('#oxBtnO').disabled = true;
+    $('#oxBtnX').disabled = true;
+
+    if (ok) {
+      ox.correct += 1;
+      ox.stars += 1;
+      ox.combo += 1;
+      if (ox.combo > ox.bestCombo) ox.bestCombo = ox.combo;
+      addStars(1);
+      bumpStreak(true);
+      sparkleAtEl(choice === 'O' ? $('#oxBtnO') : $('#oxBtnX'));
+      $('#oxFeedback').className = 'feedback good';
+      $('#oxFeedback').innerHTML = '<b>정답! ⭐' + (secs < 2.5 ? ' ⚡ ' + secs.toFixed(1) + '초 만에 맞혔어요' : '') + '</b>' +
+        '<p>' + q.item.word + ' — ' + q.item.short + (ox.combo >= 3 ? ' · 🔥 ' + ox.combo + '콤보!' : '') + '</p>';
+    } else {
+      ox.combo = 0;
+      bumpStreak(false);
+      $('#oxFeedback').className = 'feedback bad';
+      $('#oxFeedback').innerHTML = '<b>' + (q.isMatch ? '이 짝은 맞았어요! 정답은 O' : '이 짝은 달라요! 정답은 X') + '</b>' +
+        '<p>' + q.item.word + ' — ' + q.item.short + '</p>';
+    }
+
+    $('#oxCombo').textContent = '🔥 콤보 ' + ox.combo;
+    $('#oxCombo').classList.toggle('hot', ox.combo >= 3);
+    $('#oxFeedback').classList.remove('hidden');
+    $('#oxBar').style.width = ((ox.index + 1) / ox.questions.length * 100) + '%';
+    $('#oxNextWrap').classList.remove('hidden');
+    $('#oxNextBtn').textContent = (ox.index + 1 >= ox.questions.length) ? '결과 보기 🎉' : '다음 문제 →';
+    try {
+      window.requestAnimationFrame(function () {
+        var r = $('#oxNextBtn').getBoundingClientRect();
+        var d = Math.ceil(r.bottom - (window.innerHeight - 122));
+        if (d > 0) window.scrollBy(0, d);
+      });
+    } catch (err) {}
+  }
+
+  $('#oxStartBtn').addEventListener('click', startOx);
+  $('#oxAgainBtn').addEventListener('click', startOx);
+  $('#oxBtnO').addEventListener('click', function () { answerOx('O'); });
+  $('#oxBtnX').addEventListener('click', function () { answerOx('X'); });
+
+  $('#oxNextBtn').addEventListener('click', function () {
+    if (ox.index + 1 >= ox.questions.length) finishOx();
+    else { ox.index += 1; renderOx(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+
+  function finishOx() {
+    ox.active = false;
+    showOxPhase('done');
+    if (ox.correct > progress.oxBest) progress.oxBest = ox.correct;
+    saveProgress();
+    $('#oxDoneDesc').textContent = '8문제 중 ' + ox.correct + '문제를 맞혔어요! 최고 콤보 ' + ox.bestCombo + '연속';
+    var s = '';
+    for (var i = 0; i < ox.stars; i++) s += '⭐';
+    $('#oxDoneStars').textContent = s || '⭐';
+    if (ox.correct >= 6) confettiBurst(24);
+    else sparkleAt(window.innerWidth / 2, window.innerHeight * 0.4);
+  }
+
+  function refreshOxIntro() {
+    var best = progress.oxBest > 0
+      ? '지금까지 가장 많이 맞힌 건 ' + progress.oxBest + '문제예요'
+      : '아직 기록이 없어요. 첫 도전을 기다릴게요!';
+    $('#oxBestLine').innerHTML = best + ' · 모은 별 <b>' + progress.stars + '개</b>';
+  }
+
+  /* ════════════════════════
+     ⑧ 선 잇기 짝맞추기
+     ════════════════════════ */
+  var lineIntro = $('#lineIntro');
+  var linePlay = $('#linePlay');
+  var lineDone = $('#lineDone');
+  var lineBoard = $('#lineBoard');
+  var lineSvg = $('#lineSvg');
+  var LINE_COLORS = ['#25c2a0', '#4aa8f0', '#8a6cf0', '#ff9a63'];
+  var line = { round: 0, rounds: 3, items: [], pairs: {}, conns: [], sel: null, active: false, stars: 0, roundDone: false, rights: [] };
+
+  function showLinePhase(phase) {
+    lineIntro.classList.toggle('hidden', phase !== 'intro');
+    linePlay.classList.toggle('hidden', phase !== 'play');
+    lineDone.classList.toggle('hidden', phase !== 'done');
+  }
+
+  function startLine() {
+    clearFx();
+    line.round = 0;
+    line.stars = 0;
+    line.active = true;
+    showLinePhase('play');
+    renderLine();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderLine() {
+    var items = shuffle(DATA.slice()).slice(0, 4);
+    var rights = shuffle(items.slice());
+    line.items = items;
+    line.rights = rights;
+    line.conns = [];
+    line.sel = null;
+    line.roundDone = false;
+    line.pairs = {};
+    items.forEach(function (it, li) {
+      for (var ri = 0; ri < rights.length; ri++) {
+        if (rights[ri].id === it.id) line.pairs[li] = ri;
+      }
+    });
+    $('#lineStep').textContent = (line.round + 1) + '판 / ' + line.rounds;
+    $('#lineFeedback').classList.add('hidden');
+    $('#lineFeedback').innerHTML = '';
+    $('#lineNextWrap').classList.add('hidden');
+
+    var html = '<svg class="line-svg" aria-hidden="true"></svg>';
+    for (var i = 0; i < 4; i++) {
+      html += '<button class="link-btn left" type="button" data-side="left" data-idx="' + i + '">' + items[i].word + '</button>';
+      html += '<button class="link-btn right" type="button" data-side="right" data-idx="' + i + '">' + rights[i].short + '</button>';
+    }
+    lineBoard.innerHTML = html;
+    lineSvg = $('.line-svg', lineBoard);
+    window.requestAnimationFrame(drawLines);
+  }
+
+  function drawLines() {
+    if (!lineSvg || !lineBoard) return;
+    var box = lineBoard.getBoundingClientRect();
+    var w = lineBoard.clientWidth;
+    var h = lineBoard.clientHeight;
+    if (!w || !h) return;
+    lineSvg.setAttribute('width', w);
+    lineSvg.setAttribute('height', h);
+    lineSvg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    var ns = 'http://www.w3.org/2000/svg';
+    while (lineSvg.firstChild) lineSvg.removeChild(lineSvg.firstChild);
+    line.conns.forEach(function (c, i) {
+      var a = c.left.getBoundingClientRect();
+      var b = c.right.getBoundingClientRect();
+      var x1 = a.right - box.left - 2;
+      var y1 = a.top + a.height / 2 - box.top;
+      var x2 = b.left - box.left + 2;
+      var y2 = b.top + b.height / 2 - box.top;
+      var stroke = LINE_COLORS[i % LINE_COLORS.length];
+      var ln = document.createElementNS(ns, 'line');
+      ln.setAttribute('x1', x1); ln.setAttribute('y1', y1);
+      ln.setAttribute('x2', x2); ln.setAttribute('y2', y2);
+      ln.setAttribute('stroke', stroke);
+      ln.setAttribute('stroke-width', '4');
+      ln.setAttribute('stroke-linecap', 'round');
+      lineSvg.appendChild(ln);
+      [[x1, y1], [x2, y2]].forEach(function (pt) {
+        var dot = document.createElementNS(ns, 'circle');
+        dot.setAttribute('cx', pt[0]);
+        dot.setAttribute('cy', pt[1]);
+        dot.setAttribute('r', '4.5');
+        dot.setAttribute('fill', stroke);
+        lineSvg.appendChild(dot);
+      });
+    });
+  }
+
+  window.addEventListener('resize', function () { if (line.active) drawLines(); });
+
+  $('#lineStartBtn').addEventListener('click', startLine);
+  $('#lineAgainBtn').addEventListener('click', startLine);
+
+  lineBoard.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.link-btn') : null;
+    if (!btn || !line.active || line.roundDone) return;
+    if (btn.classList.contains('done')) return;
+    var side = btn.getAttribute('data-side');
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+
+    if (!line.sel) {
+      line.sel = { side: side, idx: idx, el: btn };
+      btn.classList.add('sel');
+      return;
+    }
+    if (line.sel.side === side) {
+      if (line.sel.el === btn) {
+        btn.classList.remove('sel');
+        line.sel = null;
+        return;
+      }
+      line.sel.el.classList.remove('sel');
+      line.sel = { side: side, idx: idx, el: btn };
+      btn.classList.add('sel');
+      return;
+    }
+
+    var leftIdx = side === 'left' ? idx : line.sel.idx;
+    var rightIdx = side === 'right' ? idx : line.sel.idx;
+    var leftEl = side === 'left' ? btn : line.sel.el;
+    var rightEl = side === 'right' ? btn : line.sel.el;
+
+    if (line.pairs[leftIdx] === rightIdx) {
+      leftEl.classList.remove('sel');
+      rightEl.classList.remove('sel');
+      leftEl.classList.add('done');
+      rightEl.classList.add('done');
+      line.conns.push({ left: leftEl, right: rightEl });
+      line.sel = null;
+      line.stars += 1;
+      addStars(1);
+      bumpStreak(true);
+      sparkleAtEl(rightEl);
+      drawLines();
+      if (line.conns.length === 4) {
+        finishLineRound();
+      } else {
+        var left = 4 - line.conns.length;
+        $('#lineFeedback').className = 'feedback good';
+        $('#lineFeedback').innerHTML = '<b>짝을 찾았어요! ⭐</b><p>' + left + '쌍이 남았어요.</p>';
+        $('#lineFeedback').classList.remove('hidden');
+      }
+    } else {
+      leftEl.classList.remove('sel');
+      rightEl.classList.remove('sel');
+      leftEl.classList.add('err');
+      rightEl.classList.add('err');
+      line.sel = null;
+      bumpStreak(false);
+      $('#lineFeedback').className = 'feedback bad';
+      $('#lineFeedback').innerHTML = '<b>짝이 아니에요</b><p>말의 뜻을 다시 생각해 보고 골라 보세요.</p>';
+      $('#lineFeedback').classList.remove('hidden');
+      window.setTimeout(function () {
+        leftEl.classList.remove('err');
+        rightEl.classList.remove('err');
+      }, 430);
+    }
+  });
+
+  function finishLineRound() {
+    line.roundDone = true;
+    var summary = line.items.map(function (it) { return it.word + ' = ' + it.short; }).join(' · ');
+    $('#lineFeedback').className = 'feedback good';
+    $('#lineFeedback').innerHTML = '<b>4쌍을 모두 이었어요! 🎉</b><p>' + summary + '</p>';
+    $('#lineFeedback').classList.remove('hidden');
+    $('#lineNextWrap').classList.remove('hidden');
+    $('#lineNextBtn').textContent = (line.round + 1 >= line.rounds) ? '결과 보기 🎉' : '다음 판 →';
+    confettiBurst(16);
+    try {
+      window.requestAnimationFrame(function () {
+        var r = $('#lineNextBtn').getBoundingClientRect();
+        var d = Math.ceil(r.bottom - (window.innerHeight - 122));
+        if (d > 0) window.scrollBy(0, d);
+      });
+    } catch (err) {}
+  }
+
+  $('#lineNextBtn').addEventListener('click', function () {
+    if (line.round + 1 >= line.rounds) finishLine();
+    else { line.round += 1; renderLine(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+
+  function finishLine() {
+    line.active = false;
+    line.roundDone = true;
+    showLinePhase('done');
+    progress.lineClears += 1;
+    saveProgress();
+    $('#lineDoneDesc').textContent = '3판에서 ' + line.stars + '쌍을 이었어요!';
+    var s = '';
+    for (var i = 0; i < line.stars; i++) s += '⭐';
+    $('#lineDoneStars').textContent = s || '⭐';
+    confettiBurst(22);
+  }
+
+  function refreshLineIntro() {
+    $('#lineBestLine').innerHTML = '지금까지 선 잇기를 <b>' + progress.lineClears + '판</b> 마쳤어요 · 모은 별 <b>' + progress.stars + '개</b>';
+  }
+
+  /* ════════════════════════
+     탭 전환
+     ════════════════════════ */
+  var tabs = $$('.tab');
+  var screens = { learn: $('#screen-learn'), quiz: $('#screen-quiz'), games: $('#screen-games') };
+
+  function switchTab(name) {
+    tabs.forEach(function (t) {
+      var on = t.getAttribute('data-screen') === name;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    Object.keys(screens).forEach(function (k) {
+      screens[k].classList.toggle('active', k === name);
+    });
+
+    if (name === 'quiz') {
+      if (!quiz.active) showQuizPhase('intro');
+      refreshQuizIntro();
+    }
+    if (name === 'games') {
+      if (!currentGame) {
+        hideGameViews();
+        gameHub.classList.remove('hidden');
+      } else if (currentGame === 'line' && line.active) {
+        window.requestAnimationFrame(drawLines);
+      }
+      refreshHub();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { switchTab(t.getAttribute('data-screen')); });
+  });
+
+  /* ════════════════════════
+     시작
+     ════════════════════════ */
+  buildLearnCards();
+  applyLearnFilter();
+  renderStats();
+  refreshQuizIntro();
+  refreshMatchIntro();
+  refreshHub();
+  refreshBlankIntro();
+  refreshTrainIntro();
+  refreshOxIntro();
+  refreshLineIntro();
+  showQuizPhase('intro');
+  showMatchPhase('intro');
+  hideGameViews();
+  gameHub.classList.remove('hidden');
+
+  // 음성 목록이 늦게 준비되는 브라우저 대응
+  if (speechOK && typeof window.speechSynthesis.getVoices === 'function') {
+    try { window.speechSynthesis.getVoices(); } catch (e) {}
+  }
+})();
+</script>
+</body>
+</html>
