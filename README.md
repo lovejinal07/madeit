@@ -2,5 +2,5 @@
 
 7~8세부터 초등학생이 사자성어·속담·관용구를 카드로 배우고, 퀴즈와 5가지 미니게임(짝꿍 카드·빈칸 채우기·순서 기차·OX 퀴즈·선 잇기)으로 익히는 놀이터입니다.
 
-- 웹에서 바로 열기: https://lovejinal07.github.io/idioms-playground/
+- 웹에서 바로 열기: https://lovejinal07.github.io/madeit/
 - 파일 하나로 동작합니다 (`index.html`, 외부 라이브러리 없음). 내려받아 휴대폰이나 PC에서 열어도 그대로 실행됩니다.
